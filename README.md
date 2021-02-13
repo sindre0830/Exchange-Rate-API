@@ -2,7 +2,7 @@
 
 #### Setup
 
-1. Open a terminal and navigate to the project directory ```cd .../task-3```
+1. Open a terminal and navigate to the project directory ```cd .../assignment-1```
 2. Type in ```go build``` to create an executable
 3. Type in ```./main``` to run the executable
 
