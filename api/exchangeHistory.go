@@ -17,10 +17,11 @@ type exchangeHistory struct {
 }
 
 // runs getInfo
-func HandlerExchangeHistory(currency string, startDate string, endDate string) {
+func HandlerExchangeHistory(country string, startDate string, endDate string) {
+	currency := HandlerCountryCurrency(country)
 	var exchanges exchangeHistory
 	getExchangeHistoryData(&exchanges, startDate, endDate)
-	fmt.Println(exchanges.Rates["2020-01-02"]["NOK"])
+	fmt.Println(exchanges.Rates["2020-01-02"][currency])
 }
 
 func getExchangeHistoryData(e *exchangeHistory, startDate string, endDate string) {
