@@ -17,10 +17,10 @@ type countryCurrency []struct {
 	} `json:"currencies"`
 }
 
-func HandlerCountryCurrency(country string) string {
-	var currency countryCurrency
-	getCountryCurrencyData(&currency, country)
-	return currency[0].Currencies[0].Code
+func handlerCountryCurrency(country string) string {
+	var countryData countryCurrency
+	getCountryCurrencyData(&countryData, country)
+	return countryData[0].Currencies[0].Code
 }
 
 func getCountryCurrencyData(e *countryCurrency, country string) {

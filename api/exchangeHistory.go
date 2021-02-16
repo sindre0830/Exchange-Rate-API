@@ -11,17 +11,50 @@ import (
 
 type exchangeHistory struct {
 	Rates    map[string](map[string]float32) `json:"rates"`
-	Start_at string                        `json:"start_at"`
-	Base     string                        `json:"base"`
-	End_at   string                        `json:"end_at"`
+	Start_at string                          `json:"start_at"`
+	Base     string                          `json:"base"`
+	End_at   string                          `json:"end_at"`
+}
+
+func NewExchangeHistory() *exchangeHistory {
+	var e exchangeHistory
+	e.Rates = make(map[string]map[string]float32)
+	return &e
 }
 
 // runs getInfo
 func HandlerExchangeHistory(country string, startDate string, endDate string) {
-	currency := HandlerCountryCurrency(country)
-	var exchanges exchangeHistory
-	getExchangeHistoryData(&exchanges, startDate, endDate)
-	fmt.Println(exchanges.Rates["2020-01-02"][currency])
+	//get currency code from country name
+	currency := handlerCountryCurrency(country)
+	//get all exchange history between two dates
+	var inpExchanges exchangeHistory
+	getExchangeHistoryData(&inpExchanges, startDate, endDate)
+	//filter out exchange history to one specific currency
+	var outExchanges exchangeHistory
+	filterExchangeHistory(&inpExchanges, &outExchanges, currency, startDate, endDate)
+
+	fmt.Println(outExchanges)
+}
+
+func filterExchangeHistory(inpE *exchangeHistory, outE *exchangeHistory, currency string, startDate string, endDate string) {
+	//initializer map in struct (could be done in a constructor)
+	outE.Rates = make(map[string]map[string]float32)
+	//iterate through input structen and adds only the values where the currency code is equal to the request
+	for date, mapCurrencies := range inpE.Rates {
+		for currencyCode, currencyValue := range mapCurrencies {
+			//branch if key in map equal requested currency
+			if(currencyCode == currency) {
+				//initialize a buffer map to add in Rates map
+				buffer := make(map[string]float32)
+				buffer[currencyCode] = currencyValue
+				outE.Rates[date] = buffer
+			}
+		}
+    }
+	//copy data from input structure to output structure
+	outE.Start_at = inpE.Start_at
+	outE.Base = inpE.Base
+	outE.End_at = inpE.End_at
 }
 
 func getExchangeHistoryData(e *exchangeHistory, startDate string, endDate string) {
