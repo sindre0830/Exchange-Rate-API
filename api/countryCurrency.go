@@ -23,7 +23,6 @@ func handlerCountryCurrency(country string, flagAlpha bool) string {
 		getCountryCurrencyData(&countryData, country)
 	} else {
 		country = handlerCountryNameToAlpha(country)
-		fmt.Println(country)
 		getCountryCurrencyData(&countryData, country)
 	}
 	return countryData.Currencies[0].Code
