@@ -19,9 +19,8 @@ func handlerCountryBorder(country string, limit int) []string {
 	//branch if limit is less than 1 or limit is higher than array length and return all the bordering countries (when limit parameter is not used)
 	if (limit < 1) || (limit >= len(countryData[0].Borders)) {
 		return countryData[0].Borders
-	} else {
-		return countryData[0].Borders[:limit]
 	}
+	return countryData[0].Borders[:limit]
 }
 
 func getCountryBorderData(e *countryBorder, country string) {
