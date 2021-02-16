@@ -16,12 +16,6 @@ type exchangeHistory struct {
 	End_at   string                          `json:"end_at"`
 }
 
-func NewExchangeHistory() *exchangeHistory {
-	var e exchangeHistory
-	e.Rates = make(map[string]map[string]float32)
-	return &e
-}
-
 // runs getInfo
 func HandlerExchangeHistory(country string, startDate string, endDate string) {
 	//get currency code from country name
