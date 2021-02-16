@@ -19,7 +19,7 @@ type exchangeHistory struct {
 // runs getInfo
 func HandlerExchangeHistory(country string, startDate string, endDate string) {
 	//get currency code from country name
-	currency := handlerCountryCurrency(country)
+	currency := handlerCountryCurrency(country, false)
 	//get all exchange history between two dates
 	var inpExchanges exchangeHistory
 	getExchangeHistoryData(&inpExchanges, startDate, endDate)

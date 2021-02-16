@@ -9,28 +9,18 @@ import (
 	"time"
 )
 
-type countryCurrency struct {
-	Currencies []struct {
-		Code   string `json:"code"`
-		Name   string `json:"name"`
-		Symbol string `json:"symbol"`
-	} `json:"currencies"`
+type countryNameToAlpha []struct {
+	Alpha3Code string `json:"alpha3Code"`
 }
 
-func handlerCountryCurrency(country string, flagAlpha bool) string {
-	var countryData countryCurrency
-	if flagAlpha {
-		getCountryCurrencyData(&countryData, country)
-	} else {
-		country = handlerCountryNameToAlpha(country)
-		fmt.Println(country)
-		getCountryCurrencyData(&countryData, country)
-	}
-	return countryData.Currencies[0].Code
+func handlerCountryNameToAlpha(country string) string {
+	var countryData countryNameToAlpha
+	getCountryAlphaCodeData(&countryData, country)
+	return countryData[0].Alpha3Code
 }
 
-func getCountryCurrencyData(e *countryCurrency, country string) {
-	url := "https://restcountries.eu/rest/v2/alpha/" + country + "?fields=currencies"
+func getCountryAlphaCodeData(e *countryNameToAlpha, country string) {
+	url := "https://restcountries.eu/rest/v2/name/" + country + "?fields=alpha3Code"
 
 	// Create new request
 	req, err := http.NewRequest(http.MethodGet, url, nil)
