@@ -24,14 +24,12 @@ type countryCurrencyRate struct {
 
 func HandlerExchangeRateBorder(country string, limit int) {
 	//get bordering countries from requested country
-	arrNeighbourCode := handlerCountryBorder(country, limit)
-	fmt.Println(arrNeighbourCode)
+	arrNeighbourCode := handlerCountryBorder(country)
 	//get the currencies of the bordering countries
 	var arrNeighbourCurrency []string
 	for _, neighbour := range arrNeighbourCode {
 		arrNeighbourCurrency = append(arrNeighbourCurrency, handlerCountryCurrency(neighbour, true))
 	}
-	fmt.Println(arrNeighbourCurrency)
 	//get the currency of the requested country and set it as base
 	baseCurrency := handlerCountryCurrency(country, false)
 	//request all available currency data
@@ -39,11 +37,14 @@ func HandlerExchangeRateBorder(country string, limit int) {
 	getExchangeRateBorderData(&inpData, baseCurrency)
 	//filter through the inputed data and generate data for output
 	var outData exchangeRateBorder
-	filterExchangeRateBorder(&inpData, &outData, arrNeighbourCode, arrNeighbourCurrency)
-		fmt.Println(outData)
+	filterExchangeRateBorder(&inpData, &outData, arrNeighbourCode, arrNeighbourCurrency, limit)
+	
+	fmt.Println(outData)
 }
 
-func filterExchangeRateBorder(inpE *exchangeRate, outE *exchangeRateBorder, arrNeighbourCode []string, arrNeighbourCurrency []string) {
+func filterExchangeRateBorder(inpE *exchangeRate, outE *exchangeRateBorder, arrNeighbourCode []string, arrNeighbourCurrency []string, limit int) {
+	//update output
+	outE.Base = inpE.Base
 	//initialize map in struct (could be done in a constructor)
 	outE.Rates = make(map[string]countryCurrencyRate)
 	//initialize a buffer struct to add in map
@@ -57,6 +58,10 @@ func filterExchangeRateBorder(inpE *exchangeRate, outE *exchangeRateBorder, arrN
 			bufferStruct.Rate = 1
 			//update output
 			outE.Rates[arrNeighbourCode[i]] = bufferStruct
+			//check if limit is hit
+			if (limit > 0) && (len(outE.Rates) >= limit) {
+				return
+			}
 		} else {
 			//iterate through map of all available currencies
 			for currencyName, currencyRate := range inpE.Rates {
@@ -67,12 +72,13 @@ func filterExchangeRateBorder(inpE *exchangeRate, outE *exchangeRateBorder, arrN
 					bufferStruct.Rate = currencyRate
 					//update output
 					outE.Rates[arrNeighbourCode[i]] = bufferStruct
+					if (limit > 0) && (len(outE.Rates) >= limit) {
+						return
+					}
 				}
 			}
 		}
 	}
-	//update output
-	outE.Base = inpE.Base
 }
 
 func getExchangeRateBorderData(e *exchangeRate, baseCurrency string) {
