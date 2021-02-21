@@ -10,9 +10,12 @@ type countryNameToAlpha []struct {
 }
 
 func handlerCountryNameToAlpha(country string) string {
-	var countryData countryNameToAlpha
-	getCountryAlphaCodeData(&countryData, country)
-	return countryData[0].Alpha3Code
+	//request country alpha code (3 characters long)
+	var inpData countryNameToAlpha
+	getCountryAlphaCodeData(&inpData, country)
+	//filter through the inputed data and generate data for output
+	outData := inpData[0].Alpha3Code
+	return outData
 }
 
 func getCountryAlphaCodeData(e *countryNameToAlpha, country string) {

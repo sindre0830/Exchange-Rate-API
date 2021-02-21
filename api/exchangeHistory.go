@@ -12,39 +12,37 @@ type ExchangeHistory struct {
 	End_at   string                          `json:"end_at"`
 }
 
-// runs getInfo
 func HandlerExchangeHistory(country string, startDate string, endDate string) ExchangeHistory {
-	//get currency code from country name
+	//request base currency code from country name
 	currency := handlerCountryCurrency(country, false)
-	//get all exchange history between two dates
-	var inpExchanges ExchangeHistory
-	getExchangeHistoryData(&inpExchanges, startDate, endDate)
-	//filter out exchange history to one specific currency
-	var outExchanges ExchangeHistory
-	filterExchangeHistory(&inpExchanges, &outExchanges, currency, startDate, endDate)
-
-	return outExchanges
+	//request all exchange history between two dates
+	var inpData ExchangeHistory
+	getExchangeHistoryData(&inpData, startDate, endDate)
+	//filter through the inputed data and generate data for output
+	var outData ExchangeHistory
+	filterExchangeHistory(&inpData, &outData, currency, startDate, endDate)
+	return outData
 }
 
-func filterExchangeHistory(inpE *ExchangeHistory, outE *ExchangeHistory, currency string, startDate string, endDate string) {
-	//initializer map in struct (could be done in a constructor)
-	outE.Rates = make(map[string]map[string]float32)
-	//iterate through input structen and adds only the values where the currency code is equal to the request
-	for date, mapCurrencies := range inpE.Rates {
+func filterExchangeHistory(inpData *ExchangeHistory, outData *ExchangeHistory, currency string, startDate string, endDate string) {
+	//initialize map in struct (could be done in a constructor)
+	outData.Rates = make(map[string]map[string]float32)
+	//iterate through input structure and add only the values where the currency code is equal to the request
+	for date, mapCurrencies := range inpData.Rates {
 		for currencyCode, currencyValue := range mapCurrencies {
 			//branch if key in map equal requested currency
-			if(currencyCode == currency) {
+			if currencyCode == currency {
 				//initialize a buffer map to add in Rates map
 				buffer := make(map[string]float32)
 				buffer[currencyCode] = currencyValue
-				outE.Rates[date] = buffer
+				outData.Rates[date] = buffer
 			}
 		}
     }
 	//copy data from input structure to output structure
-	outE.Start_at = inpE.Start_at
-	outE.Base = inpE.Base
-	outE.End_at = inpE.End_at
+	outData.Start_at = inpData.Start_at
+	outData.Base = inpData.Base
+	outData.End_at = inpData.End_at
 }
 
 func getExchangeHistoryData(e *ExchangeHistory, startDate string, endDate string) {

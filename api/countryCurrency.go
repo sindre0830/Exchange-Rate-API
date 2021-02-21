@@ -14,14 +14,19 @@ type countryCurrency struct {
 }
 
 func handlerCountryCurrency(country string, flagAlpha bool) string {
-	var countryData countryCurrency
+	//request country currency code (NOK, USD, EUR, ...)
+	var inpData countryCurrency
+	//branch if country parameter is an alpha code (NOR, SWE, FIN, ...)
 	if flagAlpha {
-		getCountryCurrencyData(&countryData, country)
+		getCountryCurrencyData(&inpData, country)
+	//branch if country parameter isn't alpha code and request alpha code
 	} else {
 		country = handlerCountryNameToAlpha(country)
-		getCountryCurrencyData(&countryData, country)
+		getCountryCurrencyData(&inpData, country)
 	}
-	return countryData.Currencies[0].Code
+	//filter through the inputed data and generate data for output
+	outData := inpData.Currencies[0].Code
+	return outData
 }
 
 func getCountryCurrencyData(e *countryCurrency, country string) {

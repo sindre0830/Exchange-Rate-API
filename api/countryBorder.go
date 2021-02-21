@@ -10,9 +10,12 @@ type countryBorder []struct {
 }
 
 func handlerCountryBorder(country string) []string {
-	var countryData countryBorder
-	getCountryBorderData(&countryData, country)
-	return countryData[0].Borders
+	//request all bordering countries of inputed country
+	var inpData countryBorder
+	getCountryBorderData(&inpData, country)
+	//filter through the inputed data and generate data for output
+	outData := inpData[0].Borders
+	return outData
 }
 
 func getCountryBorderData(e *countryBorder, country string) {
