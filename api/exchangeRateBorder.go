@@ -17,7 +17,7 @@ type ExchangeRateBorder struct {
 }
 
 type countryCurrencyRate struct {
-	Currency string `json:"currency`
+	Currency string `json:"currency"`
 	Rate float32 `json:"rate"`
 }
 
