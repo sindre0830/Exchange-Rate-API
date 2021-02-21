@@ -2,11 +2,10 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 )
 
-type exchangeHistory struct {
+type ExchangeHistory struct {
 	Rates    map[string](map[string]float32) `json:"rates"`
 	Start_at string                          `json:"start_at"`
 	Base     string                          `json:"base"`
@@ -14,20 +13,20 @@ type exchangeHistory struct {
 }
 
 // runs getInfo
-func HandlerExchangeHistory(country string, startDate string, endDate string) {
+func HandlerExchangeHistory(country string, startDate string, endDate string) ExchangeHistory {
 	//get currency code from country name
 	currency := handlerCountryCurrency(country, false)
 	//get all exchange history between two dates
-	var inpExchanges exchangeHistory
+	var inpExchanges ExchangeHistory
 	getExchangeHistoryData(&inpExchanges, startDate, endDate)
 	//filter out exchange history to one specific currency
-	var outExchanges exchangeHistory
+	var outExchanges ExchangeHistory
 	filterExchangeHistory(&inpExchanges, &outExchanges, currency, startDate, endDate)
 
-	fmt.Println(outExchanges)
+	return outExchanges
 }
 
-func filterExchangeHistory(inpE *exchangeHistory, outE *exchangeHistory, currency string, startDate string, endDate string) {
+func filterExchangeHistory(inpE *ExchangeHistory, outE *ExchangeHistory, currency string, startDate string, endDate string) {
 	//initializer map in struct (could be done in a constructor)
 	outE.Rates = make(map[string]map[string]float32)
 	//iterate through input structen and adds only the values where the currency code is equal to the request
@@ -48,7 +47,7 @@ func filterExchangeHistory(inpE *exchangeHistory, outE *exchangeHistory, currenc
 	outE.End_at = inpE.End_at
 }
 
-func getExchangeHistoryData(e *exchangeHistory, startDate string, endDate string) {
+func getExchangeHistoryData(e *ExchangeHistory, startDate string, endDate string) {
 	url := "https://api.exchangeratesapi.io/history?start_at=" + startDate + "&end_at=" + endDate
 
 	output := requestData(url)

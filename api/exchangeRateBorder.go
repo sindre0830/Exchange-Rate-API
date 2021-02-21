@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 )
 
@@ -12,7 +11,7 @@ type exchangeRate struct {
 	Date  string `json:"date"`
 }
 
-type exchangeRateBorder struct {
+type ExchangeRateBorder struct {
 	Rates map[string]countryCurrencyRate `json:"rates"`
 	Base string `json:"base"`
 }
@@ -22,7 +21,7 @@ type countryCurrencyRate struct {
 	Rate float32 `json:"rate"`
 }
 
-func HandlerExchangeRateBorder(country string, limit int) {
+func HandlerExchangeRateBorder(country string, limit int) ExchangeRateBorder {
 	//get bordering countries from requested country
 	arrNeighbourCode := handlerCountryBorder(country)
 	//get the currencies of the bordering countries
@@ -36,13 +35,13 @@ func HandlerExchangeRateBorder(country string, limit int) {
 	var inpData exchangeRate
 	getExchangeRateBorderData(&inpData, baseCurrency)
 	//filter through the inputed data and generate data for output
-	var outData exchangeRateBorder
+	var outData ExchangeRateBorder
 	filterExchangeRateBorder(&inpData, &outData, arrNeighbourCode, arrNeighbourCurrency, limit)
 	
-	fmt.Println(outData)
+	return outData
 }
 
-func filterExchangeRateBorder(inpE *exchangeRate, outE *exchangeRateBorder, arrNeighbourCode []string, arrNeighbourCurrency []string, limit int) {
+func filterExchangeRateBorder(inpE *exchangeRate, outE *ExchangeRateBorder, arrNeighbourCode []string, arrNeighbourCurrency []string, limit int) {
 	//update output
 	outE.Base = inpE.Base
 	//initialize map in struct (could be done in a constructor)

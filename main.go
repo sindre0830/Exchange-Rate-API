@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"main/api"
 	"net/http"
@@ -14,9 +15,11 @@ func main() {
 		port = "8080"
 	}
 
-	//api.HandlerExchangeHistory("norway", "2020-01-01", "2020-01-10")
+	data1 := api.HandlerExchangeHistory("norway", "2020-01-01", "2020-01-10")
+	fmt.Println(data1)
 
-	api.HandlerExchangeRateBorder("russia", 4)
+	data2 := api.HandlerExchangeRateBorder("russia", 4)
+	fmt.Println(data2)
 
 	log.Fatal(http.ListenAndServe(":" + port, nil))
 }
