@@ -3,6 +3,10 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"net/url"
+	"strconv"
+	"strings"
 )
 
 type exchangeRate struct {
@@ -11,7 +15,7 @@ type exchangeRate struct {
 	Date  string `json:"date"`
 }
 
-type ExchangeRateBorder struct {
+type exchangeRateBorder struct {
 	Rates map[string]countryCurrencyRate `json:"rates"`
 	Base string `json:"base"`
 }
@@ -21,39 +25,73 @@ type countryCurrencyRate struct {
 	Rate float32 `json:"rate"`
 }
 
-func HandlerExchangeRateBorder(country string, limit int) ExchangeRateBorder {
+func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
+	//split URL path by '/'
+	arrURL := strings.Split(r.URL.Path, "/")
+	//branch if the URL path isn't correct
+	if len(arrURL) != 5 {
+		status := http.StatusBadRequest
+		http.Error(w, "Error: Path format. Expected format: '.../country/?limit=num' ('?limit=num' is optional). Example: '.../norway/?limit=2'", status)
+		return
+	}
+	//set country variable
+	country := arrURL[4]
+	//get the currency of the requested country and set it as base
+	baseCurrency, err := handlerCountryCurrency(country, false)
+	if err != nil {
+		status := http.StatusBadRequest
+		http.Error(w, "Error: Getting base currency. Expected format: '.../country/...'. Example: '.../norway/...'", status)
+		return
+	}
+	//request all available currency data
+	var inpData exchangeRate
+	err = getExchangeRateBorderData(&inpData, baseCurrency)
+	if err != nil {
+		status := http.StatusBadRequest
+		http.Error(w, "Error: Getting latest exchange rate. Expected format: '.../country/...'. Example: '.../norway/...'", status)
+		return
+	}
+	//set default limit to 0 (no limit)
+	limit := 0
+	//get all parameters from URL
+	arrURLParameters, _ := url.ParseQuery(r.URL.RawQuery)
+	//branch if any parameters exist
+	if len(arrURLParameters) > 0 {
+		//set new limit according to URL parameter
+		limit, _ = strconv.Atoi(arrURLParameters["limit"][0])
+	}
 	//get bordering countries from requested country
 	arrNeighbourCode, err := handlerCountryBorder(country)
 	if err != nil {
-		//handle error
+		status := http.StatusBadRequest
+		http.Error(w, "Error: Getting bordering countries. Expected format: '.../country/...'. Example: '.../norway/...'", status)
+		return
 	}
 	//get the currencies of the bordering countries
 	var arrNeighbourCurrency []string
 	for _, neighbour := range arrNeighbourCode {
 		neighbourCurrency, err := handlerCountryCurrency(neighbour, true)
 		if err != nil {
-			//handle error
+			status := http.StatusBadRequest
+			http.Error(w, "Error: Getting bordering countries exchange rate. Expected format: '.../country/...'. Example: '.../norway/...'", status)
+			return
 		}
 		arrNeighbourCurrency = append(arrNeighbourCurrency, neighbourCurrency)
 	}
-	//get the currency of the requested country and set it as base
-	baseCurrency, err := handlerCountryCurrency(country, false)
-	if err != nil {
-		//handle error
-	}
-	//request all available currency data
-	var inpData exchangeRate
-	err = getExchangeRateBorderData(&inpData, baseCurrency)
-	if err != nil {
-		//handle error
-	}
 	//filter through the inputed data and generate data for output
-	var outData ExchangeRateBorder
+	var outData exchangeRateBorder
 	filterExchangeRateBorder(&inpData, &outData, arrNeighbourCode, arrNeighbourCurrency, limit)
-	return outData
+	//set header to json
+	w.Header().Set("Content-Type", "application/json")
+	//send output to user
+	err = json.NewEncoder(w).Encode(outData)
+	//branch if something went wrong with output
+	if err != nil {
+		fmt.Println("ERROR encoding JSON", err)
+	}
 }
 
-func filterExchangeRateBorder(inpData *exchangeRate, outData *ExchangeRateBorder, arrNeighbourCode []string, arrNeighbourCurrency []string, limit int) {
+func filterExchangeRateBorder(inpData *exchangeRate, outData *exchangeRateBorder, arrNeighbourCode []string, arrNeighbourCurrency []string, limit int) {
 	//update output
 	outData.Base = inpData.Base
 	//initialize map in struct (could be done in a constructor)

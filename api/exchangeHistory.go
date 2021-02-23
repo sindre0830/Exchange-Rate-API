@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-type ExchangeHistory struct {
+type exchangeHistory struct {
 	Rates    map[string](map[string]float32) `json:"rates"`
 	StartAt string                          `json:"start_at"`
 	Base     string                          `json:"base"`
@@ -68,7 +68,7 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 	startDate := dates[:10]
 	endDate := dates[11:]
 	//request all exchange history between two dates
-	var inpData ExchangeHistory
+	var inpData exchangeHistory
 	err = getExchangeHistoryData(&inpData, startDate, endDate)
 	if err != nil {
 		status := http.StatusBadRequest
@@ -76,7 +76,7 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//filter through the inputed data and generate data for output
-	var outData ExchangeHistory
+	var outData exchangeHistory
 	filterExchangeHistory(&inpData, &outData, currency, startDate, endDate)
 	//set header to json
 	w.Header().Set("Content-Type", "application/json")
@@ -88,7 +88,7 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func filterExchangeHistory(inpData *ExchangeHistory, outData *ExchangeHistory, currency string, startDate string, endDate string) {
+func filterExchangeHistory(inpData *exchangeHistory, outData *exchangeHistory, currency string, startDate string, endDate string) {
 	//initialize map in struct (could be done in a constructor)
 	outData.Rates = make(map[string]map[string]float32)
 	//iterate through input structure and add only the values where the currency code is equal to the request
@@ -109,7 +109,7 @@ func filterExchangeHistory(inpData *ExchangeHistory, outData *ExchangeHistory, c
 	outData.EndAt = inpData.EndAt
 }
 
-func getExchangeHistoryData(e *ExchangeHistory, startDate string, endDate string) error {
+func getExchangeHistoryData(e *exchangeHistory, startDate string, endDate string) error {
 	url := "https://api.exchangeratesapi.io/history?start_at=" + startDate + "&end_at=" + endDate
 	//gets raw output from api
 	output, err := requestData(url)
