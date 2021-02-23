@@ -2,7 +2,7 @@ package api
 
 import (
 	"encoding/json"
-	"log"
+	"fmt"
 )
 
 type countryCurrency struct {
@@ -13,29 +13,39 @@ type countryCurrency struct {
 	} `json:"currencies"`
 }
 
-func handlerCountryCurrency(country string, flagAlpha bool) string {
+func handlerCountryCurrency(country string, flagAlpha bool) (string, error)  {
+	//create error variable
+	var err error
 	//request country currency code (NOK, USD, EUR, ...)
 	var inpData countryCurrency
 	//branch if country parameter is an alpha code (NOR, SWE, FIN, ...)
 	if flagAlpha {
-		getCountryCurrencyData(&inpData, country)
+		err = getCountryCurrencyData(&inpData, country)
 	//branch if country parameter isn't alpha code and request alpha code
 	} else {
-		country = handlerCountryNameToAlpha(country)
-		getCountryCurrencyData(&inpData, country)
+		country, err := handlerCountryNameToAlpha(country)
+		if err != nil {
+			return "", err
+		}
+		err = getCountryCurrencyData(&inpData, country)
 	}
 	//filter through the inputed data and generate data for output
 	outData := inpData.Currencies[0].Code
-	return outData
+	return outData, err
 }
 
-func getCountryCurrencyData(e *countryCurrency, country string) {
+func getCountryCurrencyData(e *countryCurrency, country string) error {
+	//url to api
 	url := "https://restcountries.eu/rest/v2/alpha/" + country + "?fields=currencies"
-
-	output := requestData(url)
-
-	jsonErr := json.Unmarshal(output, &e)
-	if jsonErr != nil {
-		log.Fatal(jsonErr)
+	//gets raw output from api
+	output, err := requestData(url)
+	if err != nil {
+		return err
 	}
+	//convert raw output to json
+	err = json.Unmarshal(output, &e)
+	if err != nil {
+		fmt.Println("ERROR encoding JSON", err)
+	}
+	return err
 }

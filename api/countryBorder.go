@@ -2,29 +2,36 @@ package api
 
 import (
 	"encoding/json"
-	"log"
+	"fmt"
 )
 
 type countryBorder []struct {
 	Borders []string `json:"borders"`
 }
 
-func handlerCountryBorder(country string) []string {
+func handlerCountryBorder(country string) ([]string, error) {
 	//request all bordering countries of inputed country
 	var inpData countryBorder
-	getCountryBorderData(&inpData, country)
+	err := getCountryBorderData(&inpData, country)
+	if err != nil {
+		return nil, err
+	}
 	//filter through the inputed data and generate data for output
 	outData := inpData[0].Borders
-	return outData
+	return outData, err
 }
 
-func getCountryBorderData(e *countryBorder, country string) {
+func getCountryBorderData(e *countryBorder, country string) error {
 	url := "https://restcountries.eu/rest/v2/name/" + country + "?fields=borders"
-
-	output := requestData(url)
-
-	jsonErr := json.Unmarshal(output, &e)
-	if jsonErr != nil {
-		log.Fatal(jsonErr)
+	//gets raw output from api
+	output, err := requestData(url)
+	if err != nil {
+		return err
 	}
+	//convert raw output to json
+	err = json.Unmarshal(output, &e)
+	if err != nil {
+		fmt.Println("ERROR encoding JSON", err)
+	}
+	return err
 }

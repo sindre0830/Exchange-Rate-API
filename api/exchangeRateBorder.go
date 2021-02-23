@@ -2,7 +2,7 @@ package api
 
 import (
 	"encoding/json"
-	"log"
+	"fmt"
 )
 
 type exchangeRate struct {
@@ -23,17 +23,30 @@ type countryCurrencyRate struct {
 
 func HandlerExchangeRateBorder(country string, limit int) ExchangeRateBorder {
 	//get bordering countries from requested country
-	arrNeighbourCode := handlerCountryBorder(country)
+	arrNeighbourCode, err := handlerCountryBorder(country)
+	if err != nil {
+		//handle error
+	}
 	//get the currencies of the bordering countries
 	var arrNeighbourCurrency []string
 	for _, neighbour := range arrNeighbourCode {
-		arrNeighbourCurrency = append(arrNeighbourCurrency, handlerCountryCurrency(neighbour, true))
+		neighbourCurrency, err := handlerCountryCurrency(neighbour, true)
+		if err != nil {
+			//handle error
+		}
+		arrNeighbourCurrency = append(arrNeighbourCurrency, neighbourCurrency)
 	}
 	//get the currency of the requested country and set it as base
-	baseCurrency := handlerCountryCurrency(country, false)
+	baseCurrency, err := handlerCountryCurrency(country, false)
+	if err != nil {
+		//handle error
+	}
 	//request all available currency data
 	var inpData exchangeRate
-	getExchangeRateBorderData(&inpData, baseCurrency)
+	err = getExchangeRateBorderData(&inpData, baseCurrency)
+	if err != nil {
+		//handle error
+	}
 	//filter through the inputed data and generate data for output
 	var outData ExchangeRateBorder
 	filterExchangeRateBorder(&inpData, &outData, arrNeighbourCode, arrNeighbourCurrency, limit)
@@ -80,13 +93,17 @@ func filterExchangeRateBorder(inpData *exchangeRate, outData *ExchangeRateBorder
 	}
 }
 
-func getExchangeRateBorderData(e *exchangeRate, baseCurrency string) {
+func getExchangeRateBorderData(e *exchangeRate, baseCurrency string) error {
 	url := "https://api.exchangeratesapi.io/latest?base=" + baseCurrency
-
-	output := requestData(url)
-	
-	jsonErr := json.Unmarshal(output, &e)
-	if jsonErr != nil {
-		log.Fatal(jsonErr)
+	//gets raw output from api
+	output, err := requestData(url)
+	if err != nil {
+		return err
 	}
+	//convert raw output to json
+	err = json.Unmarshal(output, &e)
+	if err != nil {
+		fmt.Println("ERROR encoding JSON", err)
+	}
+	return err
 }
