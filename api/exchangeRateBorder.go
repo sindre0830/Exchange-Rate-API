@@ -40,7 +40,7 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 	baseCurrency, err := handlerCountryCurrency(country, false)
 	if err != nil {
 		status := http.StatusBadRequest
-		http.Error(w, "Error: Getting base currency. Expected format: '.../country/...'. Example: '.../norway/...'", status)
+		http.Error(w, "Error: Not valid country. Expected format: '.../country/...'. Example: '.../norway/...'", status)
 		return
 	}
 	//request all available currency data
@@ -48,7 +48,7 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 	err = getExchangeRateBorderData(&inpData, baseCurrency)
 	if err != nil {
 		status := http.StatusBadRequest
-		http.Error(w, "Error: Getting latest exchange rate. Expected format: '.../country/...'. Example: '.../norway/...'", status)
+		http.Error(w, "Error: Country currency is not available.", status)
 		return
 	}
 	//set default limit to 0 (no limit)
@@ -64,7 +64,7 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 	arrNeighbourCode, err := handlerCountryBorder(country)
 	if err != nil {
 		status := http.StatusBadRequest
-		http.Error(w, "Error: Getting bordering countries. Expected format: '.../country/...'. Example: '.../norway/...'", status)
+		http.Error(w, "Error: Getting bordering countries.", status)
 		return
 	}
 	//get the currencies of the bordering countries
@@ -73,7 +73,7 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 		neighbourCurrency, err := handlerCountryCurrency(neighbour, true)
 		if err != nil {
 			status := http.StatusBadRequest
-			http.Error(w, "Error: Getting bordering countries exchange rate. Expected format: '.../country/...'. Example: '.../norway/...'", status)
+			http.Error(w, "Error: Getting bordering countries exchange rate.", status)
 			return
 		}
 		arrNeighbourCurrency = append(arrNeighbourCurrency, neighbourCurrency)
