@@ -70,6 +70,7 @@ func filterExchangeRateBorder(inpData *exchangeRate, outData *ExchangeRateBorder
 					bufferStruct.Rate = currencyRate
 					//update output
 					outData.Rates[arrNeighbourCode[i]] = bufferStruct
+					//check if limit is hit
 					if (limit > 0) && (len(outData.Rates) >= limit) {
 						return
 					}
