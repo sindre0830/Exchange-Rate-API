@@ -7,9 +7,9 @@ import (
 
 type ExchangeHistory struct {
 	Rates    map[string](map[string]float32) `json:"rates"`
-	Start_at string                          `json:"start_at"`
+	StartAt string                          `json:"start_at"`
 	Base     string                          `json:"base"`
-	End_at   string                          `json:"end_at"`
+	EndAt   string                          `json:"end_at"`
 }
 
 func HandlerExchangeHistory(country string, startDate string, endDate string) ExchangeHistory {
@@ -40,9 +40,9 @@ func filterExchangeHistory(inpData *ExchangeHistory, outData *ExchangeHistory, c
 		}
     }
 	//copy data from input structure to output structure
-	outData.Start_at = inpData.Start_at
+	outData.StartAt = inpData.StartAt
 	outData.Base = inpData.Base
-	outData.End_at = inpData.End_at
+	outData.EndAt = inpData.EndAt
 }
 
 func getExchangeHistoryData(e *ExchangeHistory, startDate string, endDate string) {
