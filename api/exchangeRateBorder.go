@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"main/log"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -30,8 +31,12 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 	arrURL := strings.Split(r.URL.Path, "/")
 	//branch if the URL path isn't correct
 	if len(arrURL) != 5 {
-		status := http.StatusBadRequest
-		http.Error(w, "Error: Path format. Expected format: '.../country/?limit=num' ('?limit=num' is optional). Example: '.../norway/?limit=2'", status)
+		log.UpdateErrorInformation(
+			http.StatusBadRequest, 
+			"Error: Path format. Expected format: '.../country?limit=num' ('?limit=num' is optional). Example: '.../norway?limit=2'",
+			"HandlerExchangeRateBorder() -> checking length of url",
+		)
+		log.PrintErrorInformation(w)
 		return
 	}
 	//set country variable
@@ -40,7 +45,7 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 	baseCurrency, err := handlerCountryCurrency(country, false)
 	if err != nil {
 		status := http.StatusBadRequest
-		http.Error(w, "Error: Not valid country. Expected format: '.../country/...'. Example: '.../norway/...'", status)
+		http.Error(w, "Error: Not valid country. Expected format: '.../country'. Example: '.../norway'", status)
 		return
 	}
 	//request all available currency data
