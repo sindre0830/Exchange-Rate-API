@@ -75,7 +75,7 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 			http.StatusBadRequest, 
 			"HandlerExchangeHistory() -> Checking if inputed dates are valid",
 			"Wrong format or the start date is larger than the end date.",
-			"Error: Date format. Expected format: '.../start_at-end_at' (YYYY-MM-DD-YYYY-MM-DD). Example: '.../2020-01-20-2021-02-01'",
+			"Date format. Expected format: '.../start_at-end_at' (YYYY-MM-DD-YYYY-MM-DD). Example: '.../2020-01-20-2021-02-01'",
 		)
 		log.PrintErrorInformation(w)
 		return
@@ -93,6 +93,17 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 			"HandlerExchangeHistory() -> getExchangeHistoryData() -> Getting all rates between two dates",
 			err.Error(),
 			"Unknown",
+		)
+		log.PrintErrorInformation(w)
+		return
+	}
+	//branch if start date is empty in input. This is an indicator to invalid date. 2020-60-42 == false
+	if inpData.StartAt == "" {
+		log.UpdateErrorMessage(
+			http.StatusInternalServerError, 
+			"HandlerExchangeHistory() -> getExchangeHistoryData() -> Getting all rates between two dates",
+			"Start date is empty.",
+			"Date is not valid, check if day or month is larger than valid number. Expected format: '.../start_at-end_at' (YYYY-MM-DD-YYYY-MM-DD). Example: '.../2020-01-20-2021-02-01'",
 		)
 		log.PrintErrorInformation(w)
 		return
