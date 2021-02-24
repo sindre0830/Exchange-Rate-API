@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"main/log"
 	"net/http"
 	"strconv"
@@ -49,6 +50,7 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 	//split date by '-' for format checking
 	var arrDate []string
 	arrDate = strings.Split(dates, "-")
+	fmt.Println(arrDate)
 	//check if date format is invalid
 	var invalidDateFlag bool
 	//check if date has correct amount of elements
