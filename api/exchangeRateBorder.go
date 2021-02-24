@@ -9,22 +9,25 @@ import (
 	"strings"
 )
 
+// exchangeRate structure keeps all current rates based on a base currency.
 type exchangeRate struct {
 	Rates map[string]float32 `json:"rates"`
-	Base  string `json:"base"`
-	Date  string `json:"date"`
+	Base  string 			 `json:"base"`
+	Date  string 			 `json:"date"`
 }
-
+// exchangeRateBorder structure keeps a map of neighbouring countries based on a base currency.
+//
+// @see countryCurrencyRate struct
 type exchangeRateBorder struct {
 	Rates map[string]countryCurrencyRate `json:"rates"`
-	Base string `json:"base"`
+	Base  string 						 `json:"base"`
 }
-
+// countryCurrencyRate structure keeps current rates for neighbouring countries.
 type countryCurrencyRate struct {
-	Currency string `json:"currency"`
-	Rate float32 `json:"rate"`
+	Currency string  `json:"currency"`
+	Rate 	 float32 `json:"rate"`
 }
-
+// HandlerExchangeRateBorder handles getting input from URL and requesting exchange rate to bordering countries to output to user.
 func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 	//split URL path by '/'
 	arrURL := strings.Split(r.URL.Path, "/")
@@ -160,7 +163,7 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 		log.PrintErrorInformation(w)
 	}
 }
-
+// filterExchangeRateBorder filters through input and send data to output
 func filterExchangeRateBorder(inpData *exchangeRate, outData *exchangeRateBorder, arrNeighbourCode []string, arrNeighbourCurrency []string, limit int) {
 	//update output
 	outData.Base = inpData.Base
@@ -200,7 +203,7 @@ func filterExchangeRateBorder(inpData *exchangeRate, outData *exchangeRateBorder
 		}
 	}
 }
-
+// getExchangeRateBorderData request all current rates based on base currency.
 func getExchangeRateBorderData(e *exchangeRate, baseCurrency string) error {
 	url := "https://api.exchangeratesapi.io/latest?base=" + baseCurrency
 	//gets raw output from api

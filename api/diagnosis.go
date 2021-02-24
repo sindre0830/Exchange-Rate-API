@@ -8,13 +8,20 @@ import (
 	"time"
 )
 
+// diagnosis structure keeps version, uptime and status codes on used API's.
 type diagnosis struct {
 	Exchangeratesapi int    `json:"exchangeratesapi"`
 	Restcountries    int    `json:"restcountries"`
 	Version          string `json:"version"`
 	Uptime           string `json:"uptime"`
 }
-
+// StartTime is a variable declared at the start of the program to calculate uptime
+var StartTime time.Time
+// getUptime calculates uptime based on start time and current time
+func getUptime() float64 {
+	return time.Since(StartTime).Seconds()
+}
+// HandlerDiagnosis request input to diagnosis structure and writes to user
 func HandlerDiagnosis(w http.ResponseWriter, r *http.Request) {
 	var diag diagnosis
 	//get exchange rate api status code
@@ -63,10 +70,4 @@ func HandlerDiagnosis(w http.ResponseWriter, r *http.Request) {
 		)
 		log.PrintErrorInformation(w)
 	}
-}
-
-var StartTime time.Time
-
-func getUptime() float64 {
-	return time.Since(StartTime).Seconds()
 }

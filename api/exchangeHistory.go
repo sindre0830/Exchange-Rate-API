@@ -8,13 +8,14 @@ import (
 	"strings"
 )
 
+// exchangeHistory structure keeps all rates between two dates based on a base currency.
 type exchangeHistory struct {
 	Rates    map[string](map[string]float32) `json:"rates"`
-	StartAt string                          `json:"start_at"`
+	StartAt  string                          `json:"start_at"`
 	Base     string                          `json:"base"`
-	EndAt   string                          `json:"end_at"`
+	EndAt    string                          `json:"end_at"`
 }
-
+// HandlerExchangeHistory handles getting input from URL and requesting exchange history to output to user.
 func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 	//split URL path by '/'
 	arrURL := strings.Split(r.URL.Path, "/")
@@ -126,7 +127,7 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 		log.PrintErrorInformation(w)
 	}
 }
-
+// filterExchangeHistory filters through input and send data to output
 func filterExchangeHistory(inpData *exchangeHistory, outData *exchangeHistory, currency string, startDate string, endDate string) {
 	//initialize map in struct (could be done in a constructor)
 	outData.Rates = make(map[string]map[string]float32)
@@ -147,7 +148,7 @@ func filterExchangeHistory(inpData *exchangeHistory, outData *exchangeHistory, c
 	outData.Base = inpData.Base
 	outData.EndAt = inpData.EndAt
 }
-
+// getExchangeHistoryData request all rates between two dates.
 func getExchangeHistoryData(e *exchangeHistory, startDate string, endDate string) error {
 	url := "https://api.exchangeratesapi.io/history?start_at=" + startDate + "&end_at=" + endDate
 	//gets raw output from api
