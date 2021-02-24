@@ -6,19 +6,20 @@ import (
 	"net/http"
 )
 
-
 type ErrorInformation struct {
-	StatusCode int    `json:"status_code"`
-	RawError   string `json:"raw_error"`
-	Location   string `json:"location"`
+	StatusCode 		 int    `json:"status_code"`
+	Location   		 string `json:"location"`
+	RawError   		 string `json:"raw_error"`
+	PossibleSolution string `json:"possible_solution"`
 }
 
 var ErrorInfo ErrorInformation
 
-func UpdateErrorInformation(status int, err string, loc string) {
+func UpdateErrorInformation(status int, loc string, err string, solution string) {
 	ErrorInfo.StatusCode = status
 	ErrorInfo.Location = loc
 	ErrorInfo.RawError = err
+	ErrorInfo.PossibleSolution = solution
 }
 
 func PrintErrorInformation(w http.ResponseWriter) {

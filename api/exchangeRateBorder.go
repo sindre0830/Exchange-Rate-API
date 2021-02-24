@@ -33,8 +33,9 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 	if len(arrURL) != 5 {
 		log.UpdateErrorInformation(
 			http.StatusBadRequest, 
-			"Error: Path format. Expected format: '.../country?limit=num' ('?limit=num' is optional). Example: '.../norway?limit=2'",
-			"HandlerExchangeRateBorder() -> checking length of url",
+			"HandlerExchangeRateBorder() -> Checking length of URL",
+			"Either too many or too few arguments in path.",
+			"Error: Path format. Expected format: '.../country?limit=num' ('?limit=num' is optional). Example: '.../norway?limit=2'.",
 		)
 		log.PrintErrorInformation(w)
 		return
@@ -45,7 +46,14 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 	baseCurrency, err := handlerCountryCurrency(country, false)
 	if err != nil {
 		status := http.StatusBadRequest
-		http.Error(w, "Error: Not valid country. Expected format: '.../country'. Example: '.../norway'", status)
+		http.Error(w, "Error: Not valid country. Expected format: '.../country'. Example: '.../norway'.", status)
+		log.UpdateErrorInformation(
+			http.StatusBadRequest, 
+			"HandlerExchangeRateBorder() -> Getting base currency from requested country in URL",
+			err.Error(),
+			"Error: Not valid country. Expected format: '.../country'. Example: '.../norway'.",
+		)
+		log.PrintErrorInformation(w)
 		return
 	}
 	//request all available currency data
