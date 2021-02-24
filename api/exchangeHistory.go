@@ -51,6 +51,7 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 	var arrDate []string
 	arrDate = strings.Split(dates, "-")
 	fmt.Println(arrDate)
+	fmt.Println(len(arrDate))
 	//check if date format is invalid
 	var invalidDateFlag bool
 	//check if date has correct amount of elements
