@@ -50,25 +50,25 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 	arrDate := strings.Split(dates, "-")
 	//check if date format is invalid
 	var invalidDateFlag bool
-	//check if all date elements are integers and at least 1. 'hehe-01-00' == false
-	for _, elemDate := range arrDate {
-		elemDateNum, err := strconv.Atoi(elemDate)
-		if err != nil || elemDate == "" || elemDateNum < 1 {
-			invalidDateFlag = true
-			break
-		}
-	}
 	//check if date has correct amount of elements
-	invalidDateFlag = invalidDateFlag || ((len(arrDate) != 6) || (len(dates) != 21))
+	invalidDateFlag = (len(arrDate) != 6) || (len(dates) != 21)
 	//check if start date is using correct format YYYY-MM-DD
 	invalidDateFlag = invalidDateFlag || ((len(arrDate[0]) != 4) || (len(arrDate[1]) != 2) || (len(arrDate[2]) != 2))
 	//check if end date is using correct format YYYY-MM-DD
 	invalidDateFlag = invalidDateFlag || ((len(arrDate[3]) != 4) || (len(arrDate[4]) != 2) || (len(arrDate[5]) != 2))
-	//set start- and end date variables
-	startDate := dates[:10]
-	endDate := dates[11:]
+	//branch if date is valid so far
+	if !invalidDateFlag {
+		//check if all date elements are integers and larger than 0. 'hehe-01-00' == false
+		for _, elemDate := range arrDate {
+			elemDateNum, err := strconv.Atoi(elemDate)
+			if err != nil || elemDateNum < 1 {
+				invalidDateFlag = true
+				break
+			}
+		}
+	}
 	//check if end date is larger or equal than start date
-	invalidDateFlag = invalidDateFlag || (startDate > endDate)
+	invalidDateFlag = invalidDateFlag || (dates[:10] > dates[11:])
 	//branch if there is an error
 	if invalidDateFlag {
 		log.UpdateErrorMessage(
@@ -80,6 +80,9 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 		log.PrintErrorInformation(w)
 		return
 	}
+	//set start- and end date variables
+	startDate := dates[:10]
+	endDate := dates[11:]
 	//request all exchange history between two dates
 	var inpData exchangeHistory
 	err = getExchangeHistoryData(&inpData, startDate, endDate)
