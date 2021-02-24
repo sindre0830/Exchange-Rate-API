@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 type countryCurrency struct {
@@ -44,8 +43,5 @@ func getCountryCurrencyData(e *countryCurrency, country string) error {
 	}
 	//convert raw output to json
 	err = json.Unmarshal(output, &e)
-	if err != nil {
-		fmt.Println("ERROR encoding JSON", err)
-	}
 	return err
 }

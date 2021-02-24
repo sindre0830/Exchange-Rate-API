@@ -3,7 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"log"
+	"main/log"
 	"net/http"
 	"time"
 )
@@ -19,14 +19,30 @@ func HandlerDiagnosis(w http.ResponseWriter, r *http.Request) {
 	var diag diagnosis
 	//get exchange rate api status code
 	resp, err := http.Get("https://api.exchangeratesapi.io/latest")
+	//branch if there is an error
 	if err != nil {
-		log.Fatal(err)
+		log.UpdateErrorMessage(
+			http.StatusInternalServerError, 
+			"HandlerDiagnosis() -> Getting status code from 'https://api.exchangeratesapi.io/latest'",
+			err.Error(),
+			"Unknown",
+		)
+		log.PrintErrorInformation(w)
+		return
 	}
 	diag.Exchangeratesapi = resp.StatusCode
 	//get rest countries api status code
 	resp, err = http.Get("https://restcountries.eu/rest/v2/all")
+	//branch if there is an error
 	if err != nil {
-		log.Fatal(err)
+		log.UpdateErrorMessage(
+			http.StatusInternalServerError, 
+			"HandlerDiagnosis() -> Getting status code from 'https://restcountries.eu/rest/v2/all'",
+			err.Error(),
+			"Unknown",
+		)
+		log.PrintErrorInformation(w)
+		return
 	}
 	diag.Restcountries = resp.StatusCode
 	//set version
@@ -39,7 +55,13 @@ func HandlerDiagnosis(w http.ResponseWriter, r *http.Request) {
 	err = json.NewEncoder(w).Encode(diag)
 	//branch if something went wrong with output
 	if err != nil {
-		fmt.Println("ERROR encoding JSON", err)
+		log.UpdateErrorMessage(
+			http.StatusInternalServerError, 
+			"HandlerDiagnosis() -> Sending output to user",
+			err.Error(),
+			"Unknown",
+		)
+		log.PrintErrorInformation(w)
 	}
 }
 
