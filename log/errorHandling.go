@@ -22,8 +22,9 @@ func UpdateErrorInformation(status int, err string, loc string) {
 }
 
 func PrintErrorInformation(w http.ResponseWriter) {
-	//set header to json
+	//update header to json
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(ErrorInfo.StatusCode)
 	//send error output to user
 	err := json.NewEncoder(w).Encode(ErrorInfo)
 	//branch if something went wrong with output
