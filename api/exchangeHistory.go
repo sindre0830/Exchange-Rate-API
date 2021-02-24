@@ -2,7 +2,7 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
+	"main/log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -18,19 +18,30 @@ type exchangeHistory struct {
 func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 	//split URL path by '/'
 	arrURL := strings.Split(r.URL.Path, "/")
-	//branch if the URL path isn't correct
+	//branch if there is an error
 	if len(arrURL) != 6 {
-		status := http.StatusBadRequest
-		http.Error(w, "Error: Path format. Expected format: '.../country/start_at-end_at'. Example: '.../norway/2020-01-20-2021-02-01'", status)
+		log.UpdateErrorMessage(
+			http.StatusBadRequest, 
+			"HandlerExchangeHistory() -> Checking length of URL",
+			"Either too many or too few arguments in path.",
+			"Path format. Expected format: '.../country/start_at-end_at'. Example: '.../norway/2020-01-20-2021-02-01'.",
+		)
+		log.PrintErrorInformation(w)
 		return
 	}
 	//set country variable
 	country := arrURL[4]
 	//request base currency code from country name
 	currency, err := handlerCountryCurrency(country, false)
+	//branch if there is an error
 	if err != nil {
-		status := http.StatusBadRequest
-		http.Error(w, "Error: Not valid country. Expected format: '.../country/...'. Example: '.../norway/...'", status)
+		log.UpdateErrorMessage(
+			http.StatusBadRequest, 
+			"HandlerExchangeHistory() -> handlerCountryCurrency() -> Getting base currency from requested country in URL",
+			err.Error(),
+			"Not valid country. Expected format: '.../country/...'. Example: '.../norway/...'.",
+		)
+		log.PrintErrorInformation(w)
 		return
 	}
 	//get dates from url
@@ -56,23 +67,34 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-	//check if end date is larger or equal than start date
-	invalidDateFlag = invalidDateFlag || (dates[:10] > dates[11:])
-	//branch if wrong date format
-	if invalidDateFlag {
-		status := http.StatusBadRequest
-		http.Error(w, "Error: Date format. Expected format: '.../start_at-end_at' (YYYY-MM-DD-YYYY-MM-DD). Example: '.../2020-01-20-2021-02-01'", status)
-		return
-	}
 	//set start- and end date variables
 	startDate := dates[:10]
 	endDate := dates[11:]
+	//check if end date is larger or equal than start date
+	invalidDateFlag = invalidDateFlag || (startDate > endDate)
+	//branch if there is an error
+	if invalidDateFlag {
+		log.UpdateErrorMessage(
+			http.StatusBadRequest, 
+			"HandlerExchangeHistory() -> Checking if inputed dates are valid",
+			"Wrong format or the start date is larger than the end date.",
+			"Error: Date format. Expected format: '.../start_at-end_at' (YYYY-MM-DD-YYYY-MM-DD). Example: '.../2020-01-20-2021-02-01'",
+		)
+		log.PrintErrorInformation(w)
+		return
+	}
 	//request all exchange history between two dates
 	var inpData exchangeHistory
 	err = getExchangeHistoryData(&inpData, startDate, endDate)
+	//branch if there is an error
 	if err != nil {
-		status := http.StatusBadRequest
-		http.Error(w, "Error: Date format. Expected format: '.../start_at-end_at' (YYYY-MM-DD-YYYY-MM-DD). Example: '.../2020-01-20-2021-02-01'", status)
+		log.UpdateErrorMessage(
+			http.StatusInternalServerError, 
+			"HandlerExchangeHistory() -> getExchangeHistoryData() -> Getting all rates between two dates",
+			err.Error(),
+			"Unknown",
+		)
+		log.PrintErrorInformation(w)
 		return
 	}
 	//filter through the inputed data and generate data for output
@@ -84,7 +106,13 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 	err = json.NewEncoder(w).Encode(outData)
 	//branch if something went wrong with output
 	if err != nil {
-		fmt.Println("ERROR encoding JSON", err)
+		log.UpdateErrorMessage(
+			http.StatusInternalServerError, 
+			"HandlerExchangeHistory() -> Sending output to user",
+			err.Error(),
+			"Unknown",
+		)
+		log.PrintErrorInformation(w)
 	}
 }
 
@@ -113,13 +141,11 @@ func getExchangeHistoryData(e *exchangeHistory, startDate string, endDate string
 	url := "https://api.exchangeratesapi.io/history?start_at=" + startDate + "&end_at=" + endDate
 	//gets raw output from api
 	output, err := requestData(url)
+	//branch if there is an error
 	if err != nil {
 		return err
 	}
 	//convert raw output to json
 	err = json.Unmarshal(output, &e)
-	if err != nil {
-		fmt.Println("ERROR encoding JSON", err)
-	}
 	return err
 }
