@@ -59,7 +59,7 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	//check if date has correct amount of elements
-	invalidDateFlag = (len(arrDate) != 6) || (len(dates) != 21)
+	invalidDateFlag = invalidDateFlag || ((len(arrDate) != 6) || (len(dates) != 21))
 	//check if start date is using correct format YYYY-MM-DD
 	invalidDateFlag = invalidDateFlag || ((len(arrDate[0]) != 4) || (len(arrDate[1]) != 2) || (len(arrDate[2]) != 2))
 	//check if end date is using correct format YYYY-MM-DD
