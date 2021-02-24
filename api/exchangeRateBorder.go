@@ -45,8 +45,6 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 	//get the currency of the requested country and set it as base
 	baseCurrency, err := handlerCountryCurrency(country, false)
 	if err != nil {
-		status := http.StatusBadRequest
-		http.Error(w, "Error: Not valid country. Expected format: '.../country'. Example: '.../norway'.", status)
 		log.UpdateErrorInformation(
 			http.StatusBadRequest, 
 			"HandlerExchangeRateBorder() -> Getting base currency from requested country in URL",
