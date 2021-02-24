@@ -83,14 +83,25 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 	}
 	//branch if any parameters exist
 	if len(arrURLParameters) > 0 {
-		//set new limit according to URL parameter
-		limit, err = strconv.Atoi(arrURLParameters["limit"][0])
-		if err != nil {
+		if elemURLParameters, ok := arrURLParameters["limit"]; ok {
+			//set new limit according to URL parameter
+			limit, err = strconv.Atoi(elemURLParameters[0])
+			if err != nil {
+				log.UpdateErrorMessage(
+					http.StatusBadRequest, 
+					"HandlerExchangeRateBorder() -> Converting limit field to integer",
+					err.Error(),
+					"Limit value is not a number. Expected format: '...?limit=num'. Example: '...?limit=2'.",
+				)
+				log.PrintErrorInformation(w)
+				return
+			}
+		} else {
 			log.UpdateErrorMessage(
 				http.StatusBadRequest, 
-				"HandlerExchangeRateBorder() -> Converting limit field to integer",
-				err.Error(),
-				"Limit value is not a number. Expected format: '...?limit=num'. Example: '...?limit=2'.",
+				"HandlerExchangeRateBorder() -> Checking if limit field exist",
+				"Fields in URL used, but doesn't contain 'limit'.",
+				"Wrong field, or typo. Expected format: '...?limit=num'. Example: '...limit=2'.",
 			)
 			log.PrintErrorInformation(w)
 			return
