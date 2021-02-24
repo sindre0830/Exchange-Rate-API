@@ -53,7 +53,7 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 	//check if all date elements are integers and at least 1. 'hehe-01-00' == false
 	for _, elemDate := range arrDate {
 		elemDateNum, err := strconv.Atoi(elemDate)
-		if err != nil || elemDateNum < 1 {
+		if err != nil || elemDate == "" || elemDateNum < 1 {
 			invalidDateFlag = true
 			break
 		}
