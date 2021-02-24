@@ -31,11 +31,11 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 	arrURL := strings.Split(r.URL.Path, "/")
 	//branch if the URL path isn't correct
 	if len(arrURL) != 5 {
-		log.UpdateErrorInformation(
+		log.UpdateErrorMessage(
 			http.StatusBadRequest, 
 			"HandlerExchangeRateBorder() -> Checking length of URL",
 			"Either too many or too few arguments in path.",
-			"Error: Path format. Expected format: '.../country?limit=num' ('?limit=num' is optional). Example: '.../norway?limit=2'.",
+			"Path format. Expected format: '.../country?limit=num' ('?limit=num' is optional). Example: '.../norway?limit=2'.",
 		)
 		log.PrintErrorInformation(w)
 		return
@@ -45,11 +45,11 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 	//get the currency of the requested country and set it as base
 	baseCurrency, err := handlerCountryCurrency(country, false)
 	if err != nil {
-		log.UpdateErrorInformation(
+		log.UpdateErrorMessage(
 			http.StatusBadRequest, 
-			"HandlerExchangeRateBorder() -> Getting base currency from requested country in URL",
+			"HandlerExchangeRateBorder() -> handlerCountryCurrency() -> Getting base currency from requested country in URL",
 			err.Error(),
-			"Error: Not valid country. Expected format: '.../country'. Example: '.../norway'.",
+			"Not valid country. Expected format: '.../country'. Example: '.../norway'.",
 		)
 		log.PrintErrorInformation(w)
 		return
@@ -58,24 +58,54 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 	var inpData exchangeRate
 	err = getExchangeRateBorderData(&inpData, baseCurrency)
 	if err != nil {
-		status := http.StatusBadRequest
-		http.Error(w, "Error: Country currency is not available.", status)
+		log.UpdateErrorMessage(
+			http.StatusInternalServerError, 
+			"HandlerExchangeRateBorder() -> getExchangeRateBorderData() -> Getting latest rates based on base currency",
+			err.Error(),
+			"Unknown",
+		)
+		log.PrintErrorInformation(w)
 		return
 	}
 	//set default limit to 0 (no limit)
 	limit := 0
 	//get all parameters from URL
-	arrURLParameters, _ := url.ParseQuery(r.URL.RawQuery)
+	arrURLParameters, err := url.ParseQuery(r.URL.RawQuery)
+	if err != nil {
+		log.UpdateErrorMessage(
+			http.StatusInternalServerError, 
+			"HandlerExchangeRateBorder() -> Getting URL field (...?limit=num)",
+			err.Error(),
+			"Unknown",
+		)
+		log.PrintErrorInformation(w)
+		return
+	}
 	//branch if any parameters exist
 	if len(arrURLParameters) > 0 {
 		//set new limit according to URL parameter
-		limit, _ = strconv.Atoi(arrURLParameters["limit"][0])
+		limit, err = strconv.Atoi(arrURLParameters["limit"][0])
+		if err != nil {
+			log.UpdateErrorMessage(
+				http.StatusBadRequest, 
+				"HandlerExchangeRateBorder() -> Converting limit field to integer",
+				err.Error(),
+				"Limit value is not a number. Expected format: '...?limit=num'. Example: '...?limit=2'.",
+			)
+			log.PrintErrorInformation(w)
+			return
+		}
 	}
 	//get bordering countries from requested country
 	arrNeighbourCode, err := handlerCountryBorder(country)
 	if err != nil {
-		status := http.StatusBadRequest
-		http.Error(w, "Error: Getting bordering countries.", status)
+		log.UpdateErrorMessage(
+			http.StatusInternalServerError, 
+			"HandlerExchangeRateBorder() -> handlerCountryBorder() -> Getting neighbouring countries",
+			err.Error(),
+			"Unknown",
+		)
+		log.PrintErrorInformation(w)
 		return
 	}
 	//get the currencies of the bordering countries
@@ -83,8 +113,13 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 	for _, neighbour := range arrNeighbourCode {
 		neighbourCurrency, err := handlerCountryCurrency(neighbour, true)
 		if err != nil {
-			status := http.StatusBadRequest
-			http.Error(w, "Error: Getting bordering countries exchange rate.", status)
+			log.UpdateErrorMessage(
+				http.StatusInternalServerError, 
+				"HandlerExchangeRateBorder() -> handlerCountryCurrency() -> Getting neighbouring countries currencies",
+				err.Error(),
+				"Unknown",
+			)
+			log.PrintErrorInformation(w)
 			return
 		}
 		arrNeighbourCurrency = append(arrNeighbourCurrency, neighbourCurrency)
@@ -98,7 +133,13 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 	err = json.NewEncoder(w).Encode(outData)
 	//branch if something went wrong with output
 	if err != nil {
-		fmt.Println("ERROR encoding JSON", err)
+		log.UpdateErrorMessage(
+			http.StatusInternalServerError, 
+			"HandlerExchangeRateBorder() -> Sending output to user",
+			err.Error(),
+			"Unknown",
+		)
+		log.PrintErrorInformation(w)
 	}
 }
 
