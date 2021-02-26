@@ -6,24 +6,25 @@ import (
 	"net/http"
 )
 
+// ErrorMessage structure keeps all error data.
 type ErrorMessage struct {
 	StatusCode 		 int    `json:"status_code"`
 	Location   		 string `json:"location"`
 	RawError   		 string `json:"raw_error"`
 	PossibleReason   string `json:"possible_reason"`
 }
-
+// ErrorMsg is a global variable.
 var ErrorMsg ErrorMessage
-
+// UpdateErrorMessage adds new information to error msg.
 func UpdateErrorMessage(status int, loc string, err string, reason string) {
 	ErrorMsg.StatusCode = status
 	ErrorMsg.Location = loc
 	ErrorMsg.RawError = err
 	ErrorMsg.PossibleReason = reason
 }
-
+// PrintErrorInformation prints error msg to user and terminal.
 func PrintErrorInformation(w http.ResponseWriter) {
-	//update header to json and set http code
+	//update header to JSON and set HTTP code
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(ErrorMsg.StatusCode)
 	//send error output to user

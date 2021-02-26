@@ -4,15 +4,15 @@ import (
 	"encoding/json"
 )
 
-// countryNameToAlpha structure keeps all alphacodes.
-type countryNameToAlpha []struct {
+// countryAlphacode structure keeps all alphacodes of a given country.
+type countryAlphacode []struct {
 	Alpha3Code string `json:"alpha3Code"`
 }
 // handlerCountryNameToAlpha handles converting country name to alphacode.
 func handlerCountryNameToAlpha(country string) (string, error) {
 	//request country alpha code (3 characters long)
-	var inpData countryNameToAlpha
-	err := getCountryAlphaCodeData(&inpData, country)
+	var inpData countryAlphacode
+	err := getCountryAlphaCode(&inpData, country)
 	//branch if there is an error
 	if err != nil {
 		return "", err
@@ -21,8 +21,8 @@ func handlerCountryNameToAlpha(country string) (string, error) {
 	outData := inpData[0].Alpha3Code
 	return outData, err
 }
-// getCountryAlphaCodeData request alphacode of country.
-func getCountryAlphaCodeData(e *countryNameToAlpha, country string) error {
+// getCountryAlphaCode request alphacode of country.
+func getCountryAlphaCode(e *countryAlphacode, country string) error {
 	url := "https://restcountries.eu/rest/v2/name/" + country + "?fields=alpha3Code"
 	//gets raw output from API
 	output, err := requestData(url)

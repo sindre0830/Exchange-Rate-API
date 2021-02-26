@@ -22,7 +22,7 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 	//branch if there is an error
 	if len(arrURL) != 6 {
 		log.UpdateErrorMessage(
-			http.StatusBadRequest, 
+			http.StatusBadRequest,
 			"HandlerExchangeHistory() -> Checking length of URL",
 			"url validation: either too many or too few arguments in url path",
 			"Path format. Expected format: '.../country/start_at-end_at'. Example: '.../norway/2020-01-20-2021-02-01'.",
@@ -65,12 +65,12 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 	endDate := dates[11:]
 	//request all exchange history between two dates
 	var inpData exchangeHistory
-	err = getExchangeHistoryData(&inpData, startDate, endDate)
+	err = getExchangeHistory(&inpData, startDate, endDate)
 	//branch if there is an error
 	if err != nil {
 		log.UpdateErrorMessage(
 			http.StatusInternalServerError, 
-			"HandlerExchangeHistory() -> getExchangeHistoryData() -> Getting all rates between two dates",
+			"HandlerExchangeHistory() -> getExchangeHistory() -> Getting all rates between two dates",
 			err.Error(),
 			"Unknown",
 		)
@@ -81,7 +81,7 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 	if inpData.StartAt == "" {
 		log.UpdateErrorMessage(
 			http.StatusInternalServerError, 
-			"HandlerExchangeHistory() -> getExchangeHistoryData() -> Getting all rates between two dates",
+			"HandlerExchangeHistory() -> getExchangeHistory() -> Getting all rates between two dates",
 			"date validation: empty input from API",
 			"Date is not valid, check if start or end date is a valid date. Expected format: '.../start_at-end_at' (YYYY-MM-DD-YYYY-MM-DD). Example: '.../2020-01-20-2021-02-01'",
 		)
@@ -128,8 +128,8 @@ func filterExchangeHistory(inpData *exchangeHistory, outData *exchangeHistory, c
 		}
     }
 }
-// getExchangeHistoryData request all rates between two dates.
-func getExchangeHistoryData(e *exchangeHistory, startDate string, endDate string) error {
+// getExchangeHistory request all rates between two dates.
+func getExchangeHistory(e *exchangeHistory, startDate string, endDate string) error {
 	url := "https://api.exchangeratesapi.io/history?start_at=" + startDate + "&end_at=" + endDate
 	//gets raw output from API
 	output, err := requestData(url)

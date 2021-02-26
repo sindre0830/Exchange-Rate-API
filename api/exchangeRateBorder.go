@@ -58,12 +58,12 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 	}
 	//request all available currency data
 	var inpData exchangeRate
-	err = getExchangeRateBorderData(&inpData, baseCurrency)
+	err = getExchangeRateBorder(&inpData, baseCurrency)
 	//branch if there is an error
 	if err != nil {
 		log.UpdateErrorMessage(
 			http.StatusInternalServerError, 
-			"HandlerExchangeRateBorder() -> getExchangeRateBorderData() -> Getting latest rates based on base currency",
+			"HandlerExchangeRateBorder() -> getExchangeRateBorder() -> Getting latest rates based on base currency",
 			err.Error(),
 			"Unknown",
 		)
@@ -202,8 +202,8 @@ func filterExchangeRateBorder(inpData *exchangeRate, outData *exchangeRateBorder
 		}
 	}
 }
-// getExchangeRateBorderData request all current rates based on base currency.
-func getExchangeRateBorderData(e *exchangeRate, baseCurrency string) error {
+// getExchangeRateBorder request all current rates based on base currency.
+func getExchangeRateBorder(e *exchangeRate, baseCurrency string) error {
 	url := "https://api.exchangeratesapi.io/latest?base=" + baseCurrency
 	//gets raw output from API
 	output, err := requestData(url)

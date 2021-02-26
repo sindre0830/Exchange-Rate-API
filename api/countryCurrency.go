@@ -20,7 +20,7 @@ func handlerCountryCurrency(country string, flagAlpha bool) (string, error)  {
 	var inpData countryCurrency
 	//branch if country parameter is an alpha code (NOR, SWE, FIN, ...)
 	if flagAlpha {
-		err = getCountryCurrencyData(&inpData, country)
+		err = getCountryCurrency(&inpData, country)
 		//branch if there is an error
 		if err != nil {
 			return "", err
@@ -32,7 +32,7 @@ func handlerCountryCurrency(country string, flagAlpha bool) (string, error)  {
 		if err != nil {
 			return "", err
 		}
-		err = getCountryCurrencyData(&inpData, country)
+		err = getCountryCurrency(&inpData, country)
 		//branch if there is an error
 		if err != nil {
 			return "", err
@@ -42,8 +42,8 @@ func handlerCountryCurrency(country string, flagAlpha bool) (string, error)  {
 	outData := inpData.Currencies[0].Code
 	return outData, err
 }
-// getCountryCurrencyData request currency information of a given country.
-func getCountryCurrencyData(e *countryCurrency, country string) error {
+// getCountryCurrency request currency information of a given country.
+func getCountryCurrency(e *countryCurrency, country string) error {
 	//url to API
 	url := "https://restcountries.eu/rest/v2/alpha/" + country + "?fields=currencies"
 	//gets raw output from API
