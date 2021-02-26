@@ -36,7 +36,7 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 		log.UpdateErrorMessage(
 			http.StatusBadRequest, 
 			"HandlerExchangeRateBorder() -> Checking length of URL",
-			"Either too many or too few arguments in path.",
+			"url validation: either too many or too few arguments in url path",
 			"Path format. Expected format: '.../country?limit=num' ('?limit=num' is optional). Example: '.../norway?limit=2'.",
 		)
 		log.PrintErrorInformation(w)
@@ -108,7 +108,7 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 			log.UpdateErrorMessage(
 				http.StatusBadRequest, 
 				"HandlerExchangeRateBorder() -> Checking if limit field exist",
-				"Fields in URL used, but doesn't contain 'limit'.",
+				"field validation: fields in URL used, but doesn't contain 'limit'",
 				"Wrong field, or typo. Expected format: '...?limit=num'. Example: '...limit=2'.",
 			)
 			log.PrintErrorInformation(w)

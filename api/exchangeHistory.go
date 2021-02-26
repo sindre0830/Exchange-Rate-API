@@ -24,7 +24,7 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 		log.UpdateErrorMessage(
 			http.StatusBadRequest, 
 			"HandlerExchangeHistory() -> Checking length of URL",
-			"Either too many or too few arguments in path.",
+			"url validation: either too many or too few arguments in url path",
 			"Path format. Expected format: '.../country/start_at-end_at'. Example: '.../norway/2020-01-20-2021-02-01'.",
 		)
 		log.PrintErrorInformation(w)
@@ -82,8 +82,8 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 		log.UpdateErrorMessage(
 			http.StatusInternalServerError, 
 			"HandlerExchangeHistory() -> getExchangeHistoryData() -> Getting all rates between two dates",
-			"Output from getting all rates between two dates is empty.",
-			"Date is not valid, check if day or month is larger than valid number. Expected format: '.../start_at-end_at' (YYYY-MM-DD-YYYY-MM-DD). Example: '.../2020-01-20-2021-02-01'",
+			"date validation: empty input from API",
+			"Date is not valid, check if start or end date is a valid date. Expected format: '.../start_at-end_at' (YYYY-MM-DD-YYYY-MM-DD). Example: '.../2020-01-20-2021-02-01'",
 		)
 		log.PrintErrorInformation(w)
 		return
