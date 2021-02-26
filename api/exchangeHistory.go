@@ -2,9 +2,9 @@ package api
 
 import (
 	"encoding/json"
+	"main/fun"
 	"main/log"
 	"net/http"
-	"strconv"
 	"strings"
 )
 
@@ -47,35 +47,14 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 	}
 	//get dates from url
 	dates := arrURL[5]
-	//split date by '-' for format checking
-	arrDate := strings.Split(dates, "-")
-	//check if date format is invalid
-	var invalidDateFlag bool
-	//check if date has correct amount of elements
-	invalidDateFlag = (len(arrDate) != 6) || (len(dates) != 21)
-	//check if start date is using correct format YYYY-MM-DD
-	invalidDateFlag = invalidDateFlag || ((len(arrDate[0]) != 4) || (len(arrDate[1]) != 2) || (len(arrDate[2]) != 2))
-	//check if end date is using correct format YYYY-MM-DD
-	invalidDateFlag = invalidDateFlag || ((len(arrDate[3]) != 4) || (len(arrDate[4]) != 2) || (len(arrDate[5]) != 2))
-	//branch if date is valid so far
-	if !invalidDateFlag {
-		//check if all date elements are integers and larger than 0. 'hehe-01-00' == false
-		for _, elemDate := range arrDate {
-			elemDateNum, err := strconv.Atoi(elemDate)
-			if err != nil || elemDateNum < 1 {
-				invalidDateFlag = true
-				break
-			}
-		}
-	}
-	//check if end date is larger or equal than start date
-	invalidDateFlag = invalidDateFlag || (dates[:10] > dates[11:])
+	//validate date input
+	err = fun.ValidateDates(dates)
 	//branch if there is an error
-	if invalidDateFlag {
+	if err != nil {
 		log.UpdateErrorMessage(
 			http.StatusBadRequest, 
 			"HandlerExchangeHistory() -> Checking if inputed dates are valid",
-			"Wrong format or the start date is larger than the end date.",
+			err.Error(),
 			"Date format. Expected format: '.../start_at-end_at' (YYYY-MM-DD-YYYY-MM-DD). Example: '.../2020-01-20-2021-02-01'",
 		)
 		log.PrintErrorInformation(w)
