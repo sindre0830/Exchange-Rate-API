@@ -16,8 +16,7 @@ type exchangeRate struct {
 	Date  string 			 `json:"date"`
 }
 // exchangeRateBorder structure keeps a map of neighbouring countries based on a base currency.
-//
-// @see countryCurrencyRate struct
+// 	@see countryCurrencyRate struct
 type exchangeRateBorder struct {
 	Rates map[string]countryCurrencyRate `json:"rates"`
 	Base  string 						 `json:"base"`
@@ -74,7 +73,7 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 	//set default limit to 0 (no limit)
 	limit := 0
 	//get all parameters from URL
-	arrURLParameters, err := url.ParseQuery(r.URL.RawQuery)
+	arrPathParameters, err := url.ParseQuery(r.URL.RawQuery)
 	//branch if there is an error
 	if err != nil {
 		log.UpdateErrorMessage(
@@ -87,11 +86,11 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//branch if any parameters exist
-	if len(arrURLParameters) > 0 {
+	if len(arrPathParameters) > 0 {
 		//branch if field 'limit' exist
-		if elemURLParameters, ok := arrURLParameters["limit"]; ok {
+		if targetParameters, ok := arrPathParameters["limit"]; ok {
 			//set new limit according to URL parameter
-			limit, err = strconv.Atoi(elemURLParameters[0])
+			limit, err = strconv.Atoi(targetParameters[0])
 			//branch if there is an error
 			if err != nil {
 				log.UpdateErrorMessage(
@@ -107,8 +106,8 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 		} else {
 			log.UpdateErrorMessage(
 				http.StatusBadRequest, 
-				"HandlerExchangeRateBorder() -> Checking if limit field exist",
-				"field validation: fields in URL used, but doesn't contain 'limit'",
+				"HandlerExchangeRateBorder() -> Validating path parameters",
+				"path validation: fields in URL used, but doesn't contain 'limit'",
 				"Wrong field, or typo. Expected format: '...?limit=num'. Example: '...limit=2'.",
 			)
 			log.PrintErrorInformation(w)
@@ -148,7 +147,7 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 	//filter through the inputed data and generate data for output
 	var outData exchangeRateBorder
 	filterExchangeRateBorder(&inpData, &outData, arrNeighbourCode, arrNeighbourCurrency, limit)
-	//set header to json
+	//set header to JSON
 	w.Header().Set("Content-Type", "application/json")
 	//send output to user
 	err = json.NewEncoder(w).Encode(outData)
@@ -163,11 +162,11 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 		log.PrintErrorInformation(w)
 	}
 }
-// filterExchangeRateBorder filters through input and send data to output
+// filterExchangeRateBorder filters through input and send data to output.
 func filterExchangeRateBorder(inpData *exchangeRate, outData *exchangeRateBorder, arrNeighbourCode []string, arrNeighbourCurrency []string, limit int) {
 	//update output
 	outData.Base = inpData.Base
-	//initialize map in struct (could be done in a constructor)
+	//initialize map in struct
 	outData.Rates = make(map[string]countryCurrencyRate)
 	//initialize a buffer struct to add in map
 	var bufferStruct countryCurrencyRate
@@ -206,13 +205,13 @@ func filterExchangeRateBorder(inpData *exchangeRate, outData *exchangeRateBorder
 // getExchangeRateBorderData request all current rates based on base currency.
 func getExchangeRateBorderData(e *exchangeRate, baseCurrency string) error {
 	url := "https://api.exchangeratesapi.io/latest?base=" + baseCurrency
-	//gets raw output from api
+	//gets raw output from API
 	output, err := requestData(url)
 	//branch if there is an error
 	if err != nil {
 		return err
 	}
-	//convert raw output to json
+	//convert raw output to JSON
 	err = json.Unmarshal(output, &e)
 	return err
 }

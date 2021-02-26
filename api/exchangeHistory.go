@@ -45,7 +45,7 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 		log.PrintErrorInformation(w)
 		return
 	}
-	//get dates from url
+	//get dates from URL
 	dates := arrURL[5]
 	//validate date input
 	err = fun.ValidateDates(dates)
@@ -77,7 +77,7 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 		log.PrintErrorInformation(w)
 		return
 	}
-	//branch if start date is empty in input. This is an indicator to invalid date. 2020-60-42 == false
+	//branch if start date is empty in input, this is likely caused by an invalid date. 2020-60-42 == false
 	if inpData.StartAt == "" {
 		log.UpdateErrorMessage(
 			http.StatusInternalServerError, 
@@ -91,7 +91,7 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 	//filter through the inputed data and generate data for output
 	var outData exchangeHistory
 	filterExchangeHistory(&inpData, &outData, currency, startDate, endDate)
-	//set header to json
+	//set header to JSON
 	w.Header().Set("Content-Type", "application/json")
 	//send output to user
 	err = json.NewEncoder(w).Encode(outData)
@@ -106,37 +106,38 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 		log.PrintErrorInformation(w)
 	}
 }
-// filterExchangeHistory filters through input and send data to output
+// filterExchangeHistory filters through input and send data to output.
 func filterExchangeHistory(inpData *exchangeHistory, outData *exchangeHistory, currency string, startDate string, endDate string) {
-	//initialize map in struct (could be done in a constructor)
+	//update output
+	outData.StartAt = inpData.StartAt
+	outData.Base = inpData.Base
+	outData.EndAt = inpData.EndAt
+	//initialize map in struct
 	outData.Rates = make(map[string]map[string]float32)
 	//iterate through input structure and add only the values where the currency code is equal to the request
 	for date, mapCurrencies := range inpData.Rates {
 		for currencyCode, currencyValue := range mapCurrencies {
 			//branch if key in map equal requested currency
 			if currencyCode == currency {
-				//initialize a buffer map to add in Rates map
+				//update buffer
 				buffer := make(map[string]float32)
 				buffer[currencyCode] = currencyValue
+				//update output
 				outData.Rates[date] = buffer
 			}
 		}
     }
-	//copy data from input structure to output structure
-	outData.StartAt = inpData.StartAt
-	outData.Base = inpData.Base
-	outData.EndAt = inpData.EndAt
 }
 // getExchangeHistoryData request all rates between two dates.
 func getExchangeHistoryData(e *exchangeHistory, startDate string, endDate string) error {
 	url := "https://api.exchangeratesapi.io/history?start_at=" + startDate + "&end_at=" + endDate
-	//gets raw output from api
+	//gets raw output from API
 	output, err := requestData(url)
 	//branch if there is an error
 	if err != nil {
 		return err
 	}
-	//convert raw output to json
+	//convert raw output to JSON
 	err = json.Unmarshal(output, &e)
 	return err
 }
