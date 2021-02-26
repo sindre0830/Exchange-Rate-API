@@ -15,16 +15,16 @@ type diagnosis struct {
 	Version          string `json:"version"`
 	Uptime           string `json:"uptime"`
 }
-// StartTime is a variable declared at the start of the program to calculate uptime
+// StartTime is a variable declared at the start of the program to calculate uptime.
 var StartTime time.Time
-// getUptime calculates uptime based on start time and current time
+// getUptime calculates uptime based on start time and current time.
 func getUptime() float64 {
 	return time.Since(StartTime).Seconds()
 }
-// HandlerDiagnosis request input to diagnosis structure and writes to user
+// HandlerDiagnosis request input to diagnosis structure and writes to user.
 func HandlerDiagnosis(w http.ResponseWriter, r *http.Request) {
 	var diag diagnosis
-	//get exchange rate api status code
+	//get exchange rate API status code
 	resp, err := http.Get("https://api.exchangeratesapi.io/latest")
 	//branch if there is an error
 	if err != nil {
@@ -38,7 +38,7 @@ func HandlerDiagnosis(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	diag.Exchangeratesapi = resp.StatusCode
-	//get rest countries api status code
+	//get rest countries API status code
 	resp, err = http.Get("https://restcountries.eu/rest/v2/all")
 	//branch if there is an error
 	if err != nil {
@@ -56,7 +56,7 @@ func HandlerDiagnosis(w http.ResponseWriter, r *http.Request) {
 	diag.Version = "v1"
 	//get uptime
 	diag.Uptime = fmt.Sprintf("%f", getUptime())
-	//set header to json
+	//set header to JSON
 	w.Header().Set("Content-Type", "application/json")
 	//send output to user
 	err = json.NewEncoder(w).Encode(diag)

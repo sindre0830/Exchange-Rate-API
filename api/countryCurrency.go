@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 )
 
+// countryCurrency structure keeps all information about currencies.
 type countryCurrency struct {
 	Currencies []struct {
 		Code   string `json:"code"`
@@ -11,7 +12,7 @@ type countryCurrency struct {
 		Symbol string `json:"symbol"`
 	} `json:"currencies"`
 }
-
+// handlerCountryCurrency handles getting currency information of a given country.
 func handlerCountryCurrency(country string, flagAlpha bool) (string, error)  {
 	//create error variable
 	var err error
@@ -20,28 +21,38 @@ func handlerCountryCurrency(country string, flagAlpha bool) (string, error)  {
 	//branch if country parameter is an alpha code (NOR, SWE, FIN, ...)
 	if flagAlpha {
 		err = getCountryCurrencyData(&inpData, country)
+		//branch if there is an error
+		if err != nil {
+			return "", err
+		}
 	//branch if country parameter isn't alpha code and request alpha code
 	} else {
 		country, err := handlerCountryNameToAlpha(country)
+		//branch if there is an error
 		if err != nil {
 			return "", err
 		}
 		err = getCountryCurrencyData(&inpData, country)
+		//branch if there is an error
+		if err != nil {
+			return "", err
+		}
 	}
 	//filter through the inputed data and generate data for output
 	outData := inpData.Currencies[0].Code
 	return outData, err
 }
-
+// getCountryCurrencyData request currency information of a given country.
 func getCountryCurrencyData(e *countryCurrency, country string) error {
-	//url to api
+	//url to API
 	url := "https://restcountries.eu/rest/v2/alpha/" + country + "?fields=currencies"
-	//gets raw output from api
+	//gets raw output from API
 	output, err := requestData(url)
+	//branch if there is an error
 	if err != nil {
 		return err
 	}
-	//convert raw output to json
+	//convert raw output to JSON
 	err = json.Unmarshal(output, &e)
 	return err
 }
