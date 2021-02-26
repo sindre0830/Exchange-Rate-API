@@ -24,6 +24,6 @@ func main() {
 	http.HandleFunc("/exchange/v1/exchangeborder/", api.HandlerExchangeRateBorder)
 	//handle program diagnosis
 	http.HandleFunc("/exchange/v1/diag/", api.HandlerDiagnosis)
-	//
+	//ends program if it can't open port
 	log.Fatal(http.ListenAndServe(":" + port, nil))
 }
