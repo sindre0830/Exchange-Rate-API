@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // countryCurrency structure keeps all information about currencies.
@@ -103,7 +102,6 @@ func getCountryCurrency(e *countryAll, arrCountry []string) error {
 	}
 	//url to API
 	url := "https://restcountries.eu/rest/v2/alpha?codes=" + codes
-	fmt.Println(url)
 	//gets raw output from API
 	output, err := requestData(url)
 	//branch if there is an error
