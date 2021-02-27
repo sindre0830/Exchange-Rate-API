@@ -18,25 +18,19 @@ func handlerCountryCurrency(country string, flagAlpha bool) (string, error)  {
 	var err error
 	//request country currency code (NOK, USD, EUR, ...)
 	var inpData countryCurrency
-	//branch if country parameter is an alpha code (NOR, SWE, FIN, ...)
-	if flagAlpha {
-		err = getCountryCurrency(&inpData, country)
-		//branch if there is an error
-		if err != nil {
-			return "", err
-		}
 	//branch if country parameter isn't alpha code and request alpha code
-	} else {
-		country, err := handlerCountryNameToAlpha(country)
+	if !flagAlpha {
+		country, err = handlerCountryNameToAlpha(country)
 		//branch if there is an error
 		if err != nil {
 			return "", err
 		}
-		err = getCountryCurrency(&inpData, country)
-		//branch if there is an error
-		if err != nil {
-			return "", err
-		}
+	}
+	//request currency code
+	err = getCountryCurrency(&inpData, country)
+	//branch if there is an error
+	if err != nil {
+		return "", err
 	}
 	//filter through the inputed data and generate data for output
 	outData := inpData.Currencies[0].Code
