@@ -21,6 +21,7 @@ func handlerCountryBorder(country string) ([]string, error) {
 	fmt.Println(inpData)
 	//filter through the inputed data and generate data for output
 	outData := inpData[0].Borders
+	fmt.Println(outData)
 	return outData, err
 }
 // getCountryBorder request bordering countries of a given country.
