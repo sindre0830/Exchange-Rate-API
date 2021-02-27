@@ -63,7 +63,7 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 	//set start- and end date variables
 	startDate := dates[:10]
 	endDate := dates[11:]
-	//request all exchange history between two dates
+	//request all exchange history between two dates of a given currency
 	var inpData exchangeHistory
 	err = getExchangeHistory(&inpData, startDate, endDate, currency)
 	//branch if there is an error
@@ -88,10 +88,8 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 		log.PrintErrorInformation(w)
 		return
 	}
-	//filter through the inputed data and generate data for output
-	var outData exchangeHistory
-	//filterExchangeHistory(&inpData, &outData, currency, startDate, endDate)
-	outData = inpData
+	//since the input is already filtered, we can send it unedited to output (made new variable for consistency)
+	outData := inpData
 	//set header to JSON
 	w.Header().Set("Content-Type", "application/json")
 	//send output to user
@@ -107,29 +105,7 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 		log.PrintErrorInformation(w)
 	}
 }
-// filterExchangeHistory filters through input and send data to output.
-func filterExchangeHistory(inpData *exchangeHistory, outData *exchangeHistory, currency string, startDate string, endDate string) {
-	//update output
-	outData.StartAt = inpData.StartAt
-	outData.Base = inpData.Base
-	outData.EndAt = inpData.EndAt
-	//initialize map in struct
-	outData.Rates = make(map[string]map[string]float32)
-	//iterate through input structure and add only the values where the currency code is equal to the request
-	for date, mapCurrencies := range inpData.Rates {
-		for currencyCode, currencyValue := range mapCurrencies {
-			//branch if key in map equal requested currency
-			if currencyCode == currency {
-				//update buffer
-				buffer := make(map[string]float32)
-				buffer[currencyCode] = currencyValue
-				//update output
-				outData.Rates[date] = buffer
-			}
-		}
-    }
-}
-// getExchangeHistory request all rates between two dates.
+// getExchangeHistory request all rates between two dates of a given currency.
 func getExchangeHistory(e *exchangeHistory, startDate string, endDate string, currency string) error {
 	url := "https://api.exchangeratesapi.io/history?start_at=" + startDate + "&end_at=" + endDate + "&symbols=" + currency
 	//gets raw output from API
