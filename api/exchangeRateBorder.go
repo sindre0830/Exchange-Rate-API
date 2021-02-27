@@ -116,6 +116,9 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+	fmt.Println("Before getting neighbours")
+	fmt.Println(country)
+	fmt.Println(country[0])
 	//get bordering countries from requested country
 	arrNeighbourCode, err := handlerCountryBorder(country[0])
 	//branch if there is an error
