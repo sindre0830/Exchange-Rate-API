@@ -32,7 +32,7 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 	}
 	//set country variable
 	country := arrURL[4]
-	//request base currency code from country name
+	//request currency code from country name
 	currency, err := handlerCountryCurrency(country, false)
 	//branch if there is an error
 	if err != nil {
@@ -65,7 +65,7 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 	endDate := dates[11:]
 	//request all exchange history between two dates
 	var inpData exchangeHistory
-	err = getExchangeHistory(&inpData, startDate, endDate)
+	err = getExchangeHistory(&inpData, startDate, endDate, currency)
 	//branch if there is an error
 	if err != nil {
 		log.UpdateErrorMessage(
@@ -90,7 +90,8 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 	}
 	//filter through the inputed data and generate data for output
 	var outData exchangeHistory
-	filterExchangeHistory(&inpData, &outData, currency, startDate, endDate)
+	//filterExchangeHistory(&inpData, &outData, currency, startDate, endDate)
+	outData = inpData
 	//set header to JSON
 	w.Header().Set("Content-Type", "application/json")
 	//send output to user
@@ -129,8 +130,8 @@ func filterExchangeHistory(inpData *exchangeHistory, outData *exchangeHistory, c
     }
 }
 // getExchangeHistory request all rates between two dates.
-func getExchangeHistory(e *exchangeHistory, startDate string, endDate string) error {
-	url := "https://api.exchangeratesapi.io/history?start_at=" + startDate + "&end_at=" + endDate
+func getExchangeHistory(e *exchangeHistory, startDate string, endDate string, currency string) error {
+	url := "https://api.exchangeratesapi.io/history?start_at=" + startDate + "&end_at=" + endDate + "&symbols=" + currency
 	//gets raw output from API
 	output, err := requestData(url)
 	//branch if there is an error
