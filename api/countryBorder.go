@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 )
 
 // countryBorder structure keeps all information about bordering countries.
@@ -12,6 +13,7 @@ type countryBorder []struct {
 func handlerCountryBorder(country string) ([]string, error) {
 	//request all bordering countries of inputed country
 	var inpData countryBorder
+	fmt.Println(country)
 	err := getCountryBorder(&inpData, country)
 	//branch if there is an error
 	if err != nil {
