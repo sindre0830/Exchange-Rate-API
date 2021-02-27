@@ -11,6 +11,7 @@ type countryBorder []struct {
 }
 // handlerCountryBorder handles getting bordering countries of a given country.
 func handlerCountryBorder(country string) ([]string, error) {
+	fmt.Println(country)
 	//request all bordering countries of inputed country
 	var inpData countryBorder
 	err := getCountryBorder(&inpData, country)
