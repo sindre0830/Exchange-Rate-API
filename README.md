@@ -47,8 +47,8 @@ There are 3 endpoints that you can append to the root path.
 
 #### Design decisions
 
-- The REST service, https://exchangeratesapi.io, allows for symbol filtering but gives an error if the given symbol doesn't exist in their database. While I could get better performance by filtering currencies when getting all the bordering currencies, I've decided to get all rates, then filter myself. That way the user can request bordering currencies of Russia and get all available currencies that exist, instead of an error.
-- The REST service, https://restcountries.eu/, allows for alpha code filtering which would be beneficial when getting all the bordering countries' currencies but doesn't seem to allow for field filtering as well. This means that I have to decide on either storing a massive amount of data that I won't use for each bordering country or request more than once (one request per bordering country). I've decided on the latter, but I'm very conflicted on what would result in better performance.
+The REST service, https://exchangeratesapi.io, allows for symbol filtering but gives an error if the given symbol doesn't exist in their database. While I could get better performance by filtering currencies when getting all the bordering currencies, I've decided to get all rates, then filter myself. That way the user can request bordering currencies of Russia and get all available currencies that exist, instead of an error.
+The REST service, https://restcountries.eu/, allows for alpha code filtering which would be beneficial when getting all the bordering countries' currencies but doesn't seem to allow for field filtering as well. This means that I have to decide on either storing a massive amount of data that I won't use for each bordering country or request more than once (one request per bordering country). I've decided on the latter, but I'm very conflicted on what would result in better performance for my service and the one I request from.
 
 #### Structure
 
