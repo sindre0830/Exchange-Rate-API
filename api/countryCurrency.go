@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 )
 
 // countryCurrency structure keeps all information about currencies.
@@ -12,8 +13,8 @@ type countryCurrency struct {
 		Symbol string `json:"symbol"`
 	} `json:"currencies"`
 }
-// Country structure keeps all information about one or more countries
-type Country []struct {
+// country structure keeps all information about one or more countries
+type country []struct {
 	Name           string    `json:"name"`
 	TopLevelDomain []string  `json:"topLevelDomain"`
 	Alpha2Code     string    `json:"alpha2Code"`
@@ -69,7 +70,7 @@ func handlerCountryCurrency(arrCountry []string, flagAlpha bool) ([]string, erro
 	//create error variable
 	var err error
 	//request country currency code (NOK, USD, EUR, ...)
-	var inpData Country
+	var inpData country
 	//branch if country parameter isn't alpha code and request alpha code
 	if !flagAlpha {
 		//this is only used for user input so it will never be more then one element in this case
@@ -87,14 +88,14 @@ func handlerCountryCurrency(arrCountry []string, flagAlpha bool) ([]string, erro
 	}
 	//filter through the inputed data and generate data for output
 	var outData []string
-	for _, country := range inpData {
-		currency := country.Currencies[0].Code
+	for _, elem := range inpData {
+		currency := elem.Currencies[0].Code
 		outData = append(outData, currency)
 	}
 	return outData, err
 }
 // getCountryCurrency request currency information of a given country.
-func getCountryCurrency(e *Country, arrCountry []string) error {
+func getCountryCurrency(e *country, arrCountry []string) error {
 	//
 	var codes string
 	for _, country := range arrCountry {
@@ -102,6 +103,7 @@ func getCountryCurrency(e *Country, arrCountry []string) error {
 	}
 	//url to API
 	url := "https://restcountries.eu/rest/v2/alpha?codes=" + codes
+	fmt.Println(url)
 	//gets raw output from API
 	output, err := requestData(url)
 	//branch if there is an error
