@@ -15,7 +15,7 @@ func handlerCountryBorder(country string) ([]string, error) {
 	fmt.Println(country)
 	//request all bordering countries of inputed country
 	var inpData countryBorder
-	err := getCountryBorder(&inpData, "NOR")
+	err := getCountryBorder(&inpData, country)
 	//branch if there is an error
 	if err != nil {
 		return nil, err
