@@ -6,7 +6,7 @@ import (
 )
 
 // countryBorder structure keeps all information about bordering countries.
-type countryBorder []struct {
+type countryBorder struct {
 	Borders []string `json:"borders"`
 }
 // handlerCountryBorder handles getting bordering countries of a given country.
@@ -22,7 +22,7 @@ func handlerCountryBorder(country string) ([]string, error) {
 	}
 	fmt.Println(inpData)
 	//filter through the inputed data and generate data for output
-	outData := inpData[0].Borders
+	outData := inpData.Borders
 	fmt.Println(outData)
 	return outData, err
 }
