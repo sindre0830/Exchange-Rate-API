@@ -31,7 +31,8 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//set country variable
-	country := arrURL[4]
+	var country []string
+	country = append(country, arrURL[4])
 	//request currency code from country name
 	currency, err := handlerCountryCurrency(country, false)
 	//branch if there is an error
@@ -65,7 +66,7 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 	endDate := dates[11:]
 	//request all exchange history between two dates of a given currency
 	var inpData exchangeHistory
-	err = getExchangeHistory(&inpData, startDate, endDate, currency)
+	err = getExchangeHistory(&inpData, startDate, endDate, currency[0])
 	//branch if there is an error
 	if err != nil {
 		log.UpdateErrorMessage(

@@ -42,7 +42,8 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//set country variable
-	country := arrURL[4]
+	var country []string
+	country = append(country, arrURL[4])
 	//get the currency of the requested country and set it as base
 	baseCurrency, err := handlerCountryCurrency(country, false)
 	//branch if there is an error
@@ -58,7 +59,7 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 	}
 	//request all available currency data
 	var inpData exchangeRate
-	err = getExchangeRateBorder(&inpData, baseCurrency)
+	err = getExchangeRateBorder(&inpData, baseCurrency[0])
 	//branch if there is an error
 	if err != nil {
 		log.UpdateErrorMessage(
@@ -115,7 +116,7 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	//get bordering countries from requested country
-	arrNeighbourCode, err := handlerCountryBorder(country)
+	arrNeighbourCode, err := handlerCountryBorder(country[0])
 	//branch if there is an error
 	if err != nil {
 		log.UpdateErrorMessage(
@@ -128,21 +129,17 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//get the currencies of the bordering countries
-	var arrNeighbourCurrency []string
-	for _, neighbour := range arrNeighbourCode {
-		neighbourCurrency, err := handlerCountryCurrency(neighbour, true)
-		//branch if there is an error
-		if err != nil {
-			log.UpdateErrorMessage(
-				http.StatusInternalServerError, 
-				"HandlerExchangeRateBorder() -> handlerCountryCurrency() -> Getting neighbouring countries currencies",
-				err.Error(),
-				"Unknown",
-			)
-			log.PrintErrorInformation(w)
-			return
-		}
-		arrNeighbourCurrency = append(arrNeighbourCurrency, neighbourCurrency)
+	arrNeighbourCurrency, err := handlerCountryCurrency(arrNeighbourCode, true)
+	//branch if there is an error
+	if err != nil {
+		log.UpdateErrorMessage(
+			http.StatusInternalServerError, 
+			"HandlerExchangeRateBorder() -> handlerCountryCurrency() -> Getting neighbouring countries currencies",
+			err.Error(),
+			"Unknown",
+		)
+		log.PrintErrorInformation(w)
+		return
 	}
 	//filter through the inputed data and generate data for output
 	var outData exchangeRateBorder
