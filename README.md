@@ -2,7 +2,10 @@
 
 ### Info
 - Root path: https://sindre-assignment-1.herokuapp.com/exchange/v1/
-- While the submission is indivudial, I have discussed the tasks with Rickard Loland and Susanne Edvardsen which might make the core solution similar. We have also helped eachother with problems that occured during development ([rubber ducking](https://en.wikipedia.org/wiki/Rubber_duck_debugging) mostly).
+- While the submission is indivudial, I have discussed the tasks with Rickard Loland and Susanne Edvardsen. We have also helped eachother with problems that occured during development ([rubber ducking](https://en.wikipedia.org/wiki/Rubber_duck_debugging) mostly).
+- I have used these REST web services to build my service:
+    - https://exchangeratesapi.io/
+    - https://restcountries.eu/
 
 ### How to use
 
