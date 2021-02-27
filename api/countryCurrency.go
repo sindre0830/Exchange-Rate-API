@@ -4,16 +4,8 @@ import (
 	"encoding/json"
 )
 
-// countryCurrency structure keeps all information about currencies.
-type countryCurrency struct {
-	Currencies []struct {
-		Code   string `json:"code"`
-		Name   string `json:"name"`
-		Symbol string `json:"symbol"`
-	} `json:"currencies"`
-}
-// countryAll structure keeps all information about one or more countries
-type countryAll []struct {
+// countries structure keeps all information about one or more countries
+type countries []struct {
 	Name           string    `json:"name"`
 	TopLevelDomain []string  `json:"topLevelDomain"`
 	Alpha2Code     string    `json:"alpha2Code"`
@@ -68,19 +60,18 @@ type countryAll []struct {
 func handlerCountryCurrency(arrCountry []string, flagAlpha bool) ([]string, error)  {
 	//create error variable
 	var err error
-	//request country currency code (NOK, USD, EUR, ...)
-	var inpData countryAll
 	//branch if country parameter isn't alpha code and request alpha code
 	if !flagAlpha {
-		//this is only used for user input so it will never be more then one element in this case
+		//this only applies when there is a user input so it will never be more then one element in this case
 		arrCountry[0], err = handlerCountryNameToAlpha(arrCountry[0])
 		//branch if there is an error
 		if err != nil {
 			return nil, err
 		}
 	}
-	//request currency code
-	err = getCountryCurrency(&inpData, arrCountry)
+	//request all information of given countries
+	var inpData countries
+	err = getCountries(&inpData, arrCountry)
 	//branch if there is an error
 	if err != nil {
 		return nil, err
@@ -93,9 +84,9 @@ func handlerCountryCurrency(arrCountry []string, flagAlpha bool) ([]string, erro
 	}
 	return outData, err
 }
-// getCountryCurrency request currency information of a given country.
-func getCountryCurrency(e *countryAll, arrCountry []string) error {
-	//
+// getCountries request all information of given countries.
+func getCountries(e *countries, arrCountry []string) error {
+	//format list of country codes to be used in URL
 	var codes string
 	for _, country := range arrCountry {
 		codes += country + ";"
