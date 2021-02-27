@@ -34,7 +34,7 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 	var country []string
 	country = append(country, arrURL[4])
 	//request currency code from country name
-	currency, err := handlerCountryCurrency(country, false)
+	currency, _, err := handlerCountryCurrency(country, false)
 	//branch if there is an error
 	if err != nil {
 		log.UpdateErrorMessage(
