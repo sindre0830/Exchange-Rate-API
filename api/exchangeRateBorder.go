@@ -63,7 +63,7 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//get the currency of the requested country and set it as base
-	baseCurrency, err := handlerCountryCurrency(country)
+	baseCurrency, _, err := handlerCountryCurrency(country)
 	//branch if there is an error
 	if err != nil {
 		log.UpdateErrorMessage(
@@ -148,7 +148,7 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//get the currencies of the bordering countries
-	arrNeighbourCurrency, err := handlerCountryCurrency(arrNeighbourCode)
+	arrNeighbourCurrency, arrNeighbourCode, err := handlerCountryCurrency(arrNeighbourCode)
 	fmt.Printf("arrNeighbourCurrency: %v\n", arrNeighbourCurrency)
 	//branch if there is an error
 	if err != nil {

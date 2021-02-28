@@ -49,7 +49,7 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//request currency code from country name
-	currency, err := handlerCountryCurrency(country)
+	currency, _, err := handlerCountryCurrency(country)
 	//branch if there is an error
 	if err != nil {
 		log.UpdateErrorMessage(
