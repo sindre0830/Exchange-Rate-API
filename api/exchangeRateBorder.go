@@ -47,8 +47,10 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 	//set country variable
 	var country []string
 	country = append(country, arrURL[4])
+	fmt.Printf("country before alpha: %s\n", country[0])
 	//convert country name to its alphacode
 	country[0], err = handlerCountryNameToAlpha(country[0])
+	fmt.Printf("country after alpha: %s\n", country[0])
 	//branch if there is an error
 	if err != nil {
 		log.UpdateErrorMessage(
@@ -131,10 +133,9 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	fmt.Printf("country: %s", country[0])
 	//get bordering countries from requested country
 	arrNeighbourCode, err := handlerCountryBorder(country[0])
-	fmt.Printf("arrNeighbourCode: %v", arrNeighbourCode)
+	fmt.Printf("arrNeighbourCode: %v\n", arrNeighbourCode)
 	//branch if there is an error
 	if err != nil {
 		log.UpdateErrorMessage(
@@ -148,7 +149,7 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 	}
 	//get the currencies of the bordering countries
 	arrNeighbourCurrency, err := handlerCountryCurrency(arrNeighbourCode)
-	fmt.Printf("arrNeighbourCurrency: %v", arrNeighbourCurrency)
+	fmt.Printf("arrNeighbourCurrency: %v\n", arrNeighbourCurrency)
 	//branch if there is an error
 	if err != nil {
 		log.UpdateErrorMessage(
