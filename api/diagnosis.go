@@ -24,6 +24,8 @@ func getUptime() float64 {
 // HandlerDiagnosis request input to diagnosis structure and writes to user.
 func HandlerDiagnosis(w http.ResponseWriter, r *http.Request) {
 	var diag diagnosis
+	//declare error variable
+	var err error
 	//get exchange rate API status code
 	resp, err := http.Get("https://api.exchangeratesapi.io/latest")
 	//branch if there is an error

@@ -28,6 +28,8 @@ type countryCurrencyRate struct {
 }
 // HandlerExchangeRateBorder handles getting input from URL and requesting exchange rate to bordering countries to output to user.
 func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
+	//create error variable
+	var err error
 	//split URL path by '/'
 	arrURL := strings.Split(r.URL.Path, "/")
 	//branch if there is an error
@@ -44,8 +46,21 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 	//set country variable
 	var country []string
 	country = append(country, arrURL[4])
+	//convert country name to its alphacode
+	country[0], err = handlerCountryNameToAlpha(country[0])
+	//branch if there is an error
+	if err != nil {
+		log.UpdateErrorMessage(
+			http.StatusBadRequest, 
+			"HandlerExchangeRateBorder() -> handlerCountryNameToAlpha() -> Converting country name to its alphacode",
+			err.Error(),
+			"Not valid country. Expected format: '.../country'. Example: '.../norway'.",
+		)
+		log.PrintErrorInformation(w)
+		return
+	}
 	//get the currency of the requested country and set it as base
-	baseCurrency, err := handlerCountryCurrency(country, false)
+	baseCurrency, err := handlerCountryCurrency(country)
 	//branch if there is an error
 	if err != nil {
 		log.UpdateErrorMessage(
@@ -129,7 +144,7 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//get the currencies of the bordering countries
-	arrNeighbourCurrency, err := handlerCountryCurrency(arrNeighbourCode, true)
+	arrNeighbourCurrency, err := handlerCountryCurrency(arrNeighbourCode)
 	//branch if there is an error
 	if err != nil {
 		log.UpdateErrorMessage(
@@ -201,6 +216,9 @@ func filterExchangeRateBorder(inpData *exchangeRate, outData *exchangeRateBorder
 }
 // getExchangeRateBorder request all current rates based on base currency.
 func getExchangeRateBorder(e *exchangeRate, baseCurrency string) error {
+	//declare error variable
+	var err error
+	//url to API
 	url := "https://api.exchangeratesapi.io/latest?base=" + baseCurrency
 	//gets raw output from API
 	output, err := requestData(url)

@@ -10,12 +10,8 @@ type countryBorder struct {
 }
 // handlerCountryBorder handles getting bordering countries of a given country.
 func handlerCountryBorder(country string) ([]string, error) {
-	//change country name to it's alpha code
-	country, err := handlerCountryNameToAlpha(country)
-	//branch if there is an error
-	if err != nil {
-		return nil, err
-	}
+	//create error variable
+	var err error
 	//request all bordering countries of inputed country
 	var inpData countryBorder
 	err = getCountryBorder(&inpData, country)
@@ -29,6 +25,9 @@ func handlerCountryBorder(country string) ([]string, error) {
 }
 // getCountryBorder request bordering countries of a given country.
 func getCountryBorder(e *countryBorder, country string) error {
+	//declare error variable
+	var err error
+	//url to API
 	url := "https://restcountries.eu/rest/v2/alpha/" + country + "?fields=borders"
 	//gets raw output from API
 	output, err := requestData(url)

@@ -8,6 +8,8 @@ import (
 
 // requestData gets raw data from API's
 func requestData(url string) ([]byte, error) {
+	//declare error variable
+	var err error
 	//create new request
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	//branch if there is an error

@@ -8,6 +8,7 @@ import (
 
 // ValidateDates checks all possible date formatting mistakes.
 func ValidateDates(dates string) error {
+	//declare error variable
 	var err error
 	//split date by '-' for format checking
 	arrDate := strings.Split(dates, "-")

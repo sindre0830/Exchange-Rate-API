@@ -10,9 +10,11 @@ type countryAlphacode []struct {
 }
 // handlerCountryNameToAlpha handles converting country name to alphacode.
 func handlerCountryNameToAlpha(country string) (string, error) {
+	//declare error variable
+	var err error
 	//request country alpha code (3 characters long)
 	var inpData countryAlphacode
-	err := getCountryAlphaCode(&inpData, country)
+	err = getCountryAlphaCode(&inpData, country)
 	//branch if there is an error
 	if err != nil {
 		return "", err
@@ -23,6 +25,9 @@ func handlerCountryNameToAlpha(country string) (string, error) {
 }
 // getCountryAlphaCode request alphacode of country.
 func getCountryAlphaCode(e *countryAlphacode, country string) error {
+	//declare error variable
+	var err error
+	//url to API
 	url := "https://restcountries.eu/rest/v2/name/" + country + "?fields=alpha3Code"
 	//gets raw output from API
 	output, err := requestData(url)

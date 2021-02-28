@@ -24,11 +24,13 @@ func UpdateErrorMessage(status int, loc string, err string, reason string) {
 }
 // PrintErrorInformation prints error msg to user and terminal.
 func PrintErrorInformation(w http.ResponseWriter) {
+	//declare error variable
+	var err error
 	//update header to JSON and set HTTP code
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(ErrorMsg.StatusCode)
 	//send error output to user
-	err := json.NewEncoder(w).Encode(ErrorMsg)
+	err = json.NewEncoder(w).Encode(ErrorMsg)
 	//branch if something went wrong with output
 	if err != nil {
 		fmt.Println("ERROR encoding JSON in PrintErrorInformation()", err)
