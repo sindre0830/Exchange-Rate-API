@@ -3,7 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"main/log"
+	"main/debug"
 	"net/http"
 	"time"
 )
@@ -30,13 +30,13 @@ func HandlerDiagnosis(w http.ResponseWriter, r *http.Request) {
 	resp, err := http.Get("https://api.exchangeratesapi.io/latest")
 	//branch if there is an error
 	if err != nil {
-		log.UpdateErrorMessage(
+		debug.UpdateErrorMessage(
 			http.StatusInternalServerError, 
 			"HandlerDiagnosis() -> Getting status code from 'https://api.exchangeratesapi.io/latest'",
 			err.Error(),
 			"Unknown",
 		)
-		log.PrintErrorInformation(w)
+		debug.PrintErrorInformation(w)
 		return
 	}
 	diag.Exchangeratesapi = resp.StatusCode
@@ -44,13 +44,13 @@ func HandlerDiagnosis(w http.ResponseWriter, r *http.Request) {
 	resp, err = http.Get("https://restcountries.eu/rest/v2/all")
 	//branch if there is an error
 	if err != nil {
-		log.UpdateErrorMessage(
+		debug.UpdateErrorMessage(
 			http.StatusInternalServerError, 
 			"HandlerDiagnosis() -> Getting status code from 'https://restcountries.eu/rest/v2/all'",
 			err.Error(),
 			"Unknown",
 		)
-		log.PrintErrorInformation(w)
+		debug.PrintErrorInformation(w)
 		return
 	}
 	diag.Restcountries = resp.StatusCode
@@ -64,12 +64,12 @@ func HandlerDiagnosis(w http.ResponseWriter, r *http.Request) {
 	err = json.NewEncoder(w).Encode(diag)
 	//branch if something went wrong with output
 	if err != nil {
-		log.UpdateErrorMessage(
+		debug.UpdateErrorMessage(
 			http.StatusInternalServerError, 
 			"HandlerDiagnosis() -> Sending output to user",
 			err.Error(),
 			"Unknown",
 		)
-		log.PrintErrorInformation(w)
+		debug.PrintErrorInformation(w)
 	}
 }
