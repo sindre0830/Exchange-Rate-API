@@ -2,16 +2,16 @@
 
 ### Info
 - Root path: https://sindre-assignment-1.herokuapp.com/exchange/v1/
-- While the submission is individual, I have discussed the tasks with Rickard Loland and Susanne Edvardsen. We have also helped each other with problems that occurred during development ([rubber ducking](https://en.wikipedia.org/wiki/Rubber_duck_debugging) mostly).
 - I have used these REST web services to build my service:
     - https://exchangeratesapi.io/
     - https://restcountries.eu/
+- While the submission is individual, I have discussed the tasks with Rickard Loland and Susanne Edvardsen. We have also helped each other with problems that occurred during development ([rubber ducking](https://en.wikipedia.org/wiki/Rubber_duck_debugging) mostly).
 
 ### How to use
 
 There are 3 endpoints that you can append to the root path.
 
-1. Exchange Rate History of a Currency for a Given Country
+1. Exchange rate history of a currency for a given country
     ```
     Method: GET
     Path: .../exchangehistory/{:country_name}/{:begin_date-end_date}
@@ -22,7 +22,7 @@ There are 3 endpoints that you can append to the root path.
         Example: https://sindre-assignment-1.herokuapp.com/exchange/v1/exchangehistory/norway/2020-01-01-2020-02-01
         ```
 
-2. Current Exchange Rate for Bordering Countries
+2. Current exchange rates for bordering countries
     ```
     Method: GET
     Path: .../exchangeborder/{:country_name}{?limit={:number}}
@@ -33,7 +33,7 @@ There are 3 endpoints that you can append to the root path.
         Example: https://sindre-assignment-1.herokuapp.com/exchange/v1/exchangeborder/norway?limit=2
         ```
 
-3. Diagnostics Interface
+3. Diagnostics interface
     ```
     Method: GET
     Path: .../diag/
@@ -74,7 +74,7 @@ type ErrorMessage struct {
     PossibleReason   string `json:"possible_reason"`
 }
 ```
-The status code will be sent to both the header and the structure for ease of debugging. The 'location' tells us which function this happened. 'raw_error' is just an error message that explains what failed. 'possible_reason' is used when the status code is 400 and is used to showcase proper formating of URL.
+The status code will be sent to both the header and the structure for ease of debugging. The 'location' tells us which function this error occured. 'raw_error' is just an error message that explains what failed. 'possible_reason' is used to give a possible reason for this error.
 
 Example:
 ```go
@@ -91,7 +91,7 @@ if err != nil {
 }
 ```
 
-The 'possible_reason' variable might not always be correct. I.e. if my service is timed out during a request, it will still show the same 'possible_reason' as when the country name is incorrect. While I could remove the entire variable and not have this mistake, I've decided to keep it since it's helpful for the client when inputting the wrong format.
+The 'possible_reason' variable might not always be correct. I.e. if my service is timed out during a request, it will still show the same 'possible_reason' as when the country name is incorrect. While I could remove the entire variable and not have this mistake, I've decided to keep it since it's helpful for the client.
 Another solution to this would be to keep the status code of each request and check if 'possible_reason' is needed (I.e. status code 500 from REST service would not print 'possible_reason'), but I didn't have time to implement this. 
 
 #### Testing
