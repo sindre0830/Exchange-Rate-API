@@ -14,7 +14,7 @@ func requestData(url string) ([]byte, error) {
 	//create new request
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	//branch if there is an error
-	if err != nil {
+	if err != nil || req.Response.StatusCode != 200 {
 		debug.UpdateStatusCode(req.Response.StatusCode)
 		return nil, err
 	}
