@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 )
 
 // countries structure keeps all information about one or more countries
@@ -78,11 +79,13 @@ func handlerCountryCurrency(arrCountry []string, flagAlpha bool) ([]string, []st
 	}
 	//filter through the inputed data and generate data for output
 	var outData []string
+	fmt.Println(arrCountry)
 	for i, country := range inpData {
 		currency := country.Currencies[0].Code
 		outData = append(outData, currency)
 		arrCountry[i] = country.Name
 	}
+	fmt.Println(arrCountry)
 	return outData, arrCountry, err
 }
 // getCountries request all information of given countries.
