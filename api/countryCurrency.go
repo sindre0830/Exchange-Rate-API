@@ -57,7 +57,7 @@ type countries []struct {
 	Cioc string `json:"cioc"`
 }
 // handlerCountryCurrency handles getting currency information of a given country.
-func handlerCountryCurrency(arrCountry []string, flagAlpha bool) ([]string, []string, error)  {
+func handlerCountryCurrency(arrCountry []string, flagAlpha bool) ([]string, error)  {
 	//create error variable
 	var err error
 	//branch if country parameter isn't alpha code and request alpha code
@@ -66,7 +66,7 @@ func handlerCountryCurrency(arrCountry []string, flagAlpha bool) ([]string, []st
 		arrCountry[0], err = handlerCountryNameToAlpha(arrCountry[0])
 		//branch if there is an error
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
 	}
 	//request all information of given countries
@@ -74,7 +74,7 @@ func handlerCountryCurrency(arrCountry []string, flagAlpha bool) ([]string, []st
 	err = getCountries(&inpData, arrCountry)
 	//branch if there is an error
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	//filter through the inputed data and generate data for output
 	var outData []string
@@ -83,7 +83,7 @@ func handlerCountryCurrency(arrCountry []string, flagAlpha bool) ([]string, []st
 		outData = append(outData, currency)
 		arrCountry[i] = country.Name
 	}
-	return outData, arrCountry, err
+	return outData, err
 }
 // getCountries request all information of given countries.
 func getCountries(e *countries, arrCountry []string) error {
