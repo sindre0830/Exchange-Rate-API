@@ -1,13 +1,13 @@
 # [Assignment 1](https://git.gvk.idi.ntnu.no/course/prog2005/prog2005-2021/-/wikis/Assignment-1)
 
 ### Info
+- Author: Sindre Eiklid (sindreik@stud.ntnu.no)
+    - While the submission is individual, I have discussed the tasks with Rickard Loland and Susanne Edvardsen. We have also helped each other with problems that occurred during development ([rubber ducking](https://en.wikipedia.org/wiki/Rubber_duck_debugging) mostly).
 - Root path: https://sindre-assignment-1.herokuapp.com/exchange/v1/
 - I have used these REST web services to build my service:
     - https://exchangeratesapi.io/
     - https://restcountries.eu/
-- While the submission is individual, I have discussed the tasks with Rickard Loland and Susanne Edvardsen. We have also helped each other with problems that occurred during development ([rubber ducking](https://en.wikipedia.org/wiki/Rubber_duck_debugging) mostly).
-
-### How to use
+### Usage
 
 There are 3 endpoints that you can append to the root path.
 
@@ -102,7 +102,7 @@ Coverage:    'fun_test'
 
 Not sure how I could do any testing on API's so I decided to only test on pure functions, which turned out to only be 1 (which was relevant). All the testing will be done on the **fun** package since that's where the pure functions go.
 
-##### How to
+##### Usage
 
 For Visual Studio Code with Golang extension:
 1. Open testing file in IDE (In the testing folder)
