@@ -2,6 +2,7 @@ package api
 
 import (
 	"io/ioutil"
+	"main/debug"
 	"net/http"
 	"time"
 )
@@ -14,6 +15,7 @@ func requestData(url string) ([]byte, error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	//branch if there is an error
 	if err != nil {
+		debug.UpdateStatusCode(req.Response.StatusCode)
 		return nil, err
 	}
 	//timeout after 2 seconds

@@ -15,12 +15,20 @@ type ErrorMessage struct {
 }
 // ErrorMsg is a global variable.
 var ErrorMsg ErrorMessage
+// UpdateStatusCode adds status code to error msg.
+func UpdateStatusCode(status int) {
+	ErrorMsg.StatusCode = status
+}
 // UpdateErrorMessage adds new information to error msg.
 func UpdateErrorMessage(status int, loc string, err string, reason string) {
-	ErrorMsg.StatusCode = status
+	if ErrorMsg.StatusCode == 0 {
+		ErrorMsg.StatusCode = status
+		ErrorMsg.PossibleReason = reason
+	} else {
+		ErrorMsg.PossibleReason = "Unknown"
+	}
 	ErrorMsg.Location = loc
 	ErrorMsg.RawError = err
-	ErrorMsg.PossibleReason = reason
 }
 // PrintErrorInformation prints error msg to user and terminal.
 func PrintErrorInformation(w http.ResponseWriter) {
