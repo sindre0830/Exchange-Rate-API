@@ -93,17 +93,6 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 		debug.PrintErrorInformation(w)
 		return
 	}
-	//branch if start date is empty in input, this is likely caused by an invalid date. 2020-60-42 == false
-	/*if inpData.StartAt == "" {
-		debug.UpdateErrorMessage(
-			http.StatusInternalServerError, 
-			"HandlerExchangeHistory() -> getExchangeHistory() -> Getting all rates between two dates",
-			"date validation: empty input from API",
-			"Date is not valid, check if start or end date is a valid date. Expected format: '.../start_at-end_at' (YYYY-MM-DD-YYYY-MM-DD). Example: '.../2020-01-20-2021-02-01'",
-		)
-		debug.PrintErrorInformation(w)
-		return
-	}*/
 	//since the input is already filtered, we can send it unedited to output (made new variable for consistency)
 	outData := inpData
 	//set header to JSON
