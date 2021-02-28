@@ -23,7 +23,7 @@ func handlerCountryBorder(country string) ([]string, error) {
 }
 // getCountryBorder request bordering countries of a given country.
 func getCountryBorder(e *countryBorder, country string) error {
-	url := "https://restcountries.eu/rest/v2/alpha/" + country + "?fields=borders"
+	url := "https://restcountries.eu/rest/v2/name/" + country + "?fields=borders"
 	//gets raw output from API
 	output, err := requestData(url)
 	//branch if there is an error
