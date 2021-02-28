@@ -70,10 +70,10 @@ func handlerCountryCurrency(arrCountry []string) ([]string, []string, error)  {
 	//filter through the inputed data and generate data for output
 	var outData []string
 	var countryFullname []string
-	for i, country := range inpData {
+	for _, country := range inpData {
 		currency := country.Currencies[0].Code
 		outData = append(outData, currency)
-		countryFullname[i] = country.Name
+		countryFullname = append(countryFullname, country.Name)
 	}
 	return outData, countryFullname, err
 }
