@@ -94,7 +94,7 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//branch if start date is empty in input, this is likely caused by an invalid date. 2020-60-42 == false
-	if inpData.StartAt == "" {
+	/*if inpData.StartAt == "" {
 		debug.UpdateErrorMessage(
 			http.StatusInternalServerError, 
 			"HandlerExchangeHistory() -> getExchangeHistory() -> Getting all rates between two dates",
@@ -103,7 +103,7 @@ func HandlerExchangeHistory(w http.ResponseWriter, r *http.Request) {
 		)
 		debug.PrintErrorInformation(w)
 		return
-	}
+	}*/
 	//since the input is already filtered, we can send it unedited to output (made new variable for consistency)
 	outData := inpData
 	//set header to JSON
