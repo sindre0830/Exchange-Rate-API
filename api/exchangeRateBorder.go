@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"main/log"
 	"net/http"
 	"net/url"
@@ -129,7 +128,6 @@ func HandlerExchangeRateBorder(w http.ResponseWriter, r *http.Request) {
 		log.PrintErrorInformation(w)
 		return
 	}
-	fmt.Println(arrNeighbourCode)
 	//get the currencies of the bordering countries
 	arrNeighbourCurrency, _, err := handlerCountryCurrency(arrNeighbourCode, true)
 	//branch if there is an error
