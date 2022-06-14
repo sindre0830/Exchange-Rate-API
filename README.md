@@ -1,4 +1,4 @@
-# [Assignment 1](https://git.gvk.idi.ntnu.no/course/prog2005/prog2005-2021/-/wikis/Assignment-1)
+# Assignment 1
 
 ### Info
 - Author: Sindre Eiklid (sindreik@stud.ntnu.no)
@@ -49,7 +49,7 @@ There are 3 endpoints that you can append to the root path.
 
 The REST service, https://exchangeratesapi.io, allows for symbol filtering but gives an error if the given symbol doesn't exist in their database. While I could get better performance by filtering currencies when getting all the bordering currencies, I've decided to get all rates, then filter myself. That way, the user can request all the bordering currencies of Russia and get all of the available currencies instead of just an error.
 
-The REST service, https://restcountries.eu/, allows for alpha code filtering, which is beneficial when getting all the bordering currencies but doesn't seem to allow for field filtering and code filtering at the same time. That means that I have to decide on either multiple requests per bordering country or one for each bordering country which would store a massive amount of data. I decided on the latter since requests are expensive for the REST service, but if you would like to check out my previous solution, you can go [here](https://git.gvk.idi.ntnu.no/course/prog2005/prog2005-2021-workspace/sindre0830/assignment-1/-/blob/9d4bf54371ce811aae325cad24a74dc5c549d641/api/countryCurrency.go).
+The REST service, https://restcountries.eu/, allows for alpha code filtering, which is beneficial when getting all the bordering currencies but doesn't seem to allow for field filtering and code filtering at the same time. That means that I have to decide on either multiple requests per bordering country or one for each bordering country which would store a massive amount of data. I decided on the latter since requests are expensive for the REST service, but if you would like to check out my previous solution, you can go [here](https://github.com/sindre0830/Exchange-Rate-API/blob/9d4bf54371ce811aae325cad24a74dc5c549d641/api/countryCurrency.go).
 
 In exchangeHistory I decided to remove my error handling if the output is empty. This is because it is either an invalid date (I.e. 2020-40-01) or the country doesn't exist in the exchange rate database (I.e. Mongolia). While I did error handling before, I decided that it's better to receive an empty struct. This makes my service more dynamic and easier to use in my opinion.
 
